@@ -6,7 +6,6 @@
 
         <title>CIS 128 Short Task 5</title>
         <link rel="stylesheet" type="text/css" href="styles.css">
-        <script src="https://maps.google.com/maps/api/js?sensor=true" > </script>
 
         <meta
             name="description"
@@ -15,12 +14,14 @@
 
         <script>
 
-            window.onload = getLocation;      
+            window.onload = getLocation;      //might not need this
             var geo = navigator.geolocation; 
 
             function getLocation() {       
                 if(geo) {    
-                        geo.getCurrentPosition(displayLocation);       
+                        geo.getCurrentPosition(displayLocation, function (error){
+                            alert("There was an error finding your location")
+                        });       
                     }
                     else {
                         alert("Oops, Geolocation API is not supported");        
@@ -77,6 +78,8 @@
                 }
 
         </script> 
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBX9rI3znC2TP2uIW3xgRfA-U-w5IIWy0U&callback=getLocation"> </script>
 
     </head>
 
