@@ -68,10 +68,12 @@ function ($scope, $stateParams) {
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams) {
 
-  window.onload = getLocation();      //might not need this
-  var geo = navigator.geolocation; 
+  window.onload = getLocation(); 
 
-  function getLocation() {       
+  function getLocation() {   
+
+    var geo = navigator.geolocation;   
+
       if(geo) {    
               geo.getCurrentPosition(displayLocation, function (error){
                   alert("There was an error finding your location")
@@ -108,7 +110,7 @@ function ($scope, $stateParams) {
 
       var title = 'Your Location';
       var content = 'You are here: ' + coords.latitude + ', ' + coords.longitude;
-      addMarker(map, googleLatAndLong, title, content);
+    //   addMarker(map, googleLatAndLong, title, content);
   }
 
 //   function addMarker (map, latlong, title, content) {
