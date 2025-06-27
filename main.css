@@ -145,11 +145,12 @@ h1>a:hover {
 
 hr {
     color: #222222;
-    height = 1px;
+    height: 1px;
 }
 
 a {
-    color: #6BD8C9;  
+    /* color: #6BD8C9;   */
+    color: #a8003e;
     text-decoration: none;
     /*font-weight: normal;*/
 }
@@ -181,6 +182,10 @@ table ol {
 
 .paper p {
   margin-bottom: 2px 
+}
+
+.short-version {
+    font-size: medium;
 }
   
 .divider {
