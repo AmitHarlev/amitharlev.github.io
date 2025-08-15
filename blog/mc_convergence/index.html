@@ -73,7 +73,7 @@
   </div>
 </div>
 <p>In the first simulation, the time average is over a <em>single sample path</em>, while in the second, the ensemble average is over the <em>entire probability distribution</em>. These two notions are fundamentally different and may not be equal. However, if you ran both simulations until they converged (which, admittedly, can take a while for the first one), you may have noticed that, in this example, the limiting time-average and ensemble-average distributions are the same and don't depend on the starting state. Systems where this is true are called <em>ergodic</em>.<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup> This is a desirable property since it means that we can learn the statistical properties of a system by observing any single (long) trajectory.</p>
-<p>Our observations of the above simulations would suggest that we should not expect the Markov cafe to remain packed all day just because it started the day full, and that in fact, the distribution of customers will converge to some unique limit regardless of the initial number of customers (though it will take much longer to converge in a cafe with capacity 200 compared to a cafe with capacity 5).</p>
+<p>Our observations from the above simulations would suggest that we should not expect the Markov cafe to remain packed all day just because it started the day full, and that in fact, the distribution of customers will converge to some unique limit regardless of the initial number of customers (though it will take much longer to converge in a cafe with capacity 200 compared to a cafe with capacity 5).</p>
 <p>When can we expect this nice behavior more generally? In this post we will provide a complete answer to this question. In particular, we answer:</p>
 <ul>
 <li>For which Markov chains does a unique limiting <strong>ensemble-average</strong> distribution exist (that is, one that doesn't depend on the starting state)?</li>
@@ -178,7 +178,7 @@
     </div>
 </div>
 <p>Let $\mathbf x_0$ denote the initial distribution of the Markov chain and let $P$ be the Markov chain's transition matrix. Then $\mathbf x_n = \mathbf x_{n-1}P$ is the distribution after advancing $n$ steps, and $\mathbf x = \lim_{n \to \infty} \mathbf x_n$ is the limiting ensemble-average distribution, which we are assuming exists.</p>
-<p>Observe that, $$<br>
+<p>Observe that, $$
 \mathbf x P = \lim_{n \to \infty} \left(\mathbf x_n \right) P = \lim_{n \to \infty} \left(\mathbf x_n P \right) = \lim_{n \to \infty} \left(\mathbf x_{n+1} \right) = \mathbf x,$$ which means that $\mathbf x$ is stationary. The key step is the second equality, which follows from the continuity of matrix multiplication (which allows us to move the $P$ into the limit).</p>
 <p>With this lemma in hand, our proof strategy becomes clearer. Rather than just showing that the ensemble-average distribution converges to <em>something</em>, we now know we should show convergence to a stationary distribution. The proof of this is very elegant and employs a clever technique.</p>
  <div class="theorem">
@@ -194,11 +194,11 @@
 <li>$\color[rgb]{0.215,0.698,0.302} \left(Y_n\right)_{n\geq 0}$ with stationary initial distribution $\pi$.</li>
 </ul>
 <p>Note that since $\pi$ is stationary, $\color[rgb]{0.215,0.698,0.302}Y_n$ has distribution $\pi$ for all $n \geq 0$.</p>
-<p>Now comes the clever part. We construct a third chain $\color[rgb]{1,0.5725,0.1686}\left(Z_n\right)_{n\geq 0}$ that starts by following $X_n$ but switches to following $\color[rgb]{0.215,0.698,0.302}Y_n$ the first time they all meet. Specifically, let $T$ be the first time $X_n = {\color[rgb]{0.215,0.698,0.302}Y_n}$. Define, $$<br>
-{\color[rgb]{1,0.5725,0.1686}Z_n} = \begin{cases}<br>
-X_n &amp; n &lt; T \cr<br>
-{\color[rgb]{0.215,0.698,0.302}Y_n} &amp; n \geq T<br>
-\end{cases}.<br>
+<p>Now comes the clever part. We construct a third chain $\color[rgb]{1,0.5725,0.1686}\left(Z_n\right)_{n\geq 0}$ that starts by following $X_n$ but switches to following $\color[rgb]{0.215,0.698,0.302}Y_n$ the first time they all meet. Specifically, let $T$ be the first time $X_n = {\color[rgb]{0.215,0.698,0.302}Y_n}$. Define, $$
+{\color[rgb]{1,0.5725,0.1686}Z_n} = \begin{cases}
+X_n &amp; n &lt; T \cr
+{\color[rgb]{0.215,0.698,0.302}Y_n} &amp; n \geq T
+\end{cases}.
 $$ The simulation below illustrates this construction. The black dot represents $X_n$, the green dot represents $\color[rgb]{0.215,0.698,0.302}Y_n$, and the orange dot represents $\color[rgb]{1,0.5725,0.1686}Z_n$. You will see that the orange dot follows the black dot until all three meet, and then switches to following the green dot. You can press &quot;Sample $Y_n$ from stationary&quot; to randomly set $\color[rgb]{0.215,0.698,0.302}Y_n$'s initial state according to the stationary distribution, or you can shift-click any state to manually set where $\color[rgb]{0.215,0.698,0.302}Y_n$ starts.</p>
 <div class="markov-embed-outer">
   <div class="markov-embed-wrapper">
@@ -207,8 +207,8 @@ $$ The simulation below illustrates this construction. The black dot represents 
 </div>
 <p><strong>What's special about $\color[rgb]{1,0.5725,0.1686}Z_n$?</strong></p>
 <p>First, <em>if</em> we know that $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ meet eventually, then $\color[rgb]{1,0.5725,0.1686}Z_n$'s distribution will converge to the stationary distribution. This is because for large $n$, it becomes increasingly likely that $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ have already met, which would mean that $\color[rgb]{1,0.5725,0.1686}Z_n$ is at the same state as $\color[rgb]{0.215,0.698,0.302}Y_n$ (which has the stationary distribution).</p>
-<p>More rigorously, <em>if</em> $\mathbf P[n &lt; T] \to 0$, then $$<br>
-\mathbf P[{\color[rgb]{1,0.5725,0.1686}Z_n} = j] = \mathbf P[{\color[rgb]{0.215,0.698,0.302}Y_n} = j \text{ and } n \geq T] + \mathbf P[X_n = j \text{ and } n &lt; T] \sim \mathbf P[{\color[rgb]{0.215,0.698,0.302}Y_n} = j] = \pi(j).<br>
+<p>More rigorously, <em>if</em> $\mathbf P[n &lt; T] \to 0$, then $$
+\mathbf P[{\color[rgb]{1,0.5725,0.1686}Z_n} = j] = \mathbf P[{\color[rgb]{0.215,0.698,0.302}Y_n} = j \text{ and } n \geq T] + \mathbf P[X_n = j \text{ and } n &lt; T] \sim \mathbf P[{\color[rgb]{0.215,0.698,0.302}Y_n} = j] = \pi(j).
 $$ (If you are unfamiliar with the $\sim$ notation, it means the expressions converge as $n \to \infty$.<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>)</p>
 <p>It can be tempting to say that in a finite Markov chain, it's obvious that $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ meet <em>eventually</em>, but this is not always true. Let's see what can go wrong by revisiting our earlier examples of chains where the ensemble-average distribution does not converge.</p>
 <hr>
@@ -219,7 +219,7 @@ $$ (If you are unfamiliar with the $\sim$ notation, it means the expressions con
   </div>
 </div>
 <hr>
-<p><strong>Example 2</strong>: If the chain has multiple recurrent classes, then $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ may end up in different recurrent classes and never meet. In this example, $\mathbf P[n &lt; T] = 0.5$ for all $n \geq 1$.<br>
+<p><strong>Example 2</strong>: If the chain has multiple recurrent classes, then $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ may end up in different recurrent classes and never meet. In this example, $\mathbf P[n &lt; T] = 0.5$ for all $n \geq 1$.
 (Note that since $\mathbf P[n &lt; T] &gt; 0$, the two chains do <em>sometimes</em> meet, so you may need to reset a couple times to see an example where they don't).</p>
 <div class="markov-embed-outer">
   <div class="markov-embed-wrapper">
@@ -248,8 +248,8 @@ $$ (If you are unfamiliar with the $\sim$ notation, it means the expressions con
   </div>
 </div>
 The important thing to observe here is that even though $\color[rgb]{1,0.5725,0.1686}Z_n$ switches to following $\color[rgb]{0.215,0.698,0.302}Y_n$ after they all meet, $\color[rgb]{1,0.5725,0.1686}Z_n$'s distribution continues to evolve in the same way that $X_n$'s does.
-<p>Therefore, for all states $j$ and $n \geq 0$, $$<br>
-\mathbf P[X_n = j] = \mathbf P[{\color[rgb]{1,0.5725,0.1686}Z_n} = j] \to \pi(j),<br>
+<p>Therefore, for all states $j$ and $n \geq 0$, $$
+\mathbf P[X_n = j] = \mathbf P[{\color[rgb]{1,0.5725,0.1686}Z_n} = j] \to \pi(j),
 $$ which completes the proof of Theorem 1.</p>
 <p>Note that an immediate corollary of Theorem 1 is that, if a finite, aperiodic Markov chain with a single recurrent class has a stationary distribution $\pi$, that must be the <em>unique stationary distribution</em>. This is because, if there were two stationary distributions $\pi$ and $\pi'$, the theorem tells us that the ensemble-average distribution of $X_n$ converges to both $\pi$ and $\pi'$, which is clearly impossible unless $\pi = \pi'$.</p>
 <p>A careful reader may have noticed an important gap in our results: we have not yet proven that a stationary distribution must exist. We have only proven that <em>if</em> such a distribution exists, the ensemble-average distribution will converge to it. This gap will be resolved in the next section where we consider limiting time-average distributions.</p>
@@ -262,8 +262,8 @@ $$ which completes the proof of Theorem 1.</p>
 </div>
 <p>Since the chain is finite and has a single recurrent class, with probability $1$, $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ will eventually both be in the recurrent class. So for simplicity, let's just assume that they both start in the recurrent class.</p>
 <p>Since the chain is aperiodic, there is some $N \geq 0$ such that $P^N_{ij} &gt; 0$ for every pair of states $i$ and $j$ in the recurrent class.</p>
-<p>Thus, if $X_n = i$ and ${\color[rgb]{0.215,0.698,0.302}Y_n} = j$, the probability that they are at the same state after $N$ steps is, $$\mathbf P[X_{n+N} = Y_{n + N}] = \sum_{k} P^N_{ik} \cdot P^N_{jk} &gt; 0,$$ where the positivity comes from the fact that $P^N_{ik}$ and $P^N_{jk}$ must be positive for all states $i$, $j$, and $k$. Since there are only finitely many pairs of states in the recurrent class, this means that, regardless of where they start, $X_n$ and ${\color[rgb]{0.215,0.698,0.302}Y_n}$ will meet with at least probability, $$<br>
-p_\text{meet} = \min_{(i,j)} \sum_{k} P^N_{ik} \cdot P^N_{jk} &gt; 0,<br>
+<p>Thus, if $X_n = i$ and ${\color[rgb]{0.215,0.698,0.302}Y_n} = j$, the probability that they are at the same state after $N$ steps is, $$\mathbf P[X_{n+N} = Y_{n + N}] = \sum_{k} P^N_{ik} \cdot P^N_{jk} &gt; 0,$$ where the positivity comes from the fact that $P^N_{ik}$ and $P^N_{jk}$ must be positive for all states $i$, $j$, and $k$. Since there are only finitely many pairs of states in the recurrent class, this means that, regardless of where they start, $X_n$ and ${\color[rgb]{0.215,0.698,0.302}Y_n}$ will meet with at least probability, $$
+p_\text{meet} = \min_{(i,j)} \sum_{k} P^N_{ik} \cdot P^N_{jk} &gt; 0,
 $$ after $N$ steps. Thus, the probability of them eventually meeting is at least as great as the probability of eventually getting a heads when repeatedly flipping a coin with heads probability $p_\text{meet} &gt; 0$, which is 1.</p>
 <h2>Part 3: When does a unique limiting time-average distribution exist?</h2>
 <p>The structure of this section is identical to the previous one. We will first consider counterexamples where no unique limiting time-average distribution exists, and then show these counterexamples are exhaustive.</p>
@@ -302,7 +302,7 @@ $$ after $N$ steps. Thus, the probability of them eventually meeting is at least
 </ul>
 <p>Why does this mean the time-average distribution converges? In the limit, the initial phase becomes negligible because it always has finite length. So the limiting fraction of time spent at each state will be determined entirely by the cycling phase. Since we have i.i.d. cycles, the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law">Strong Law of Large Numbers</a> tells us that the average behavior across cycles will converge to the expected behavior of a single cycle.</p>
 <p>To make that last claim precise:</p>
-<p>Let $C^j$ be the length of an excursion starting and ending at state $j$, and let $V^j(i)$ be the number of visits to state $i$ during that excursion. (Here, the excursion begins after initially leaving state $j$ so as to not double count.) Let $\big(C^j_1, V^j_1(i)\big), \big(C^j_2, V^j_2(i)\big), \dots$ be i.i.d. copies of $\big(C^j, V^j(i)\big)$. By the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law">SLLN</a>, the following holds with probability $1$:<br>
+<p>Let $C^j$ be the length of an excursion starting and ending at state $j$, and let $V^j(i)$ be the number of visits to state $i$ during that excursion. (Here, the excursion begins after initially leaving state $j$ so as to not double count.) Let $\big(C^j_1, V^j_1(i)\big), \big(C^j_2, V^j_2(i)\big), \dots$ be i.i.d. copies of $\big(C^j, V^j(i)\big)$. By the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law">SLLN</a>, the following holds with probability $1$:
 $$\frac{V^j_1(i) + \cdots + V^j_k(i)}{k} \to \mathbf E[V^j(i)] \quad \text{and} \quad \frac{C^j_1 + \cdots + C^j_k}{k} \to \mathbf E[C^j].$$ However, we want the fraction of time spent at state $i$, which is: $$\frac{\text{total visits to $i$}}{\text{total time}} = \frac{V^j_1(i) + V^j_2(i) + V^j_3(i) + \cdots}{C^j_1 + C^j_2 + C^j_3 + \cdots}$$ Intuitively, since $C^j_1 + \cdots + C^j_k \approx k\mathbf E[C^j]$ for large $k$, we get: $$\frac{V^j_1(i) + \cdots + V^j_k(i)}{C^j_1 + \cdots + C^j_k} \approx \frac{V^j_1(i) + \cdots + V^j_k(i)}{k\mathbf E[C^j]} \to \frac{\mathbf E[V^j(i)]}{\mathbf E[C^j]}.$$ This final convergence is rigorously established by the <a href="https://en.wikipedia.org/wiki/Renewal_theory#Elementary_renewal_theorem_for_renewal_reward_processes">Renewal-Reward theorem</a>, which handles the ratio of two sums that each satisfy the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law">SLLN</a>, even when the corresponding terms in the two sums are dependent (as $C^j_k$ and $V^j_k(i)$ are here).</p>
 <p>Putting this all together, we get the following convergence result.</p>
 <div class="theorem">
@@ -336,9 +336,9 @@ $$\frac{V^j_1(i) + \cdots + V^j_k(i)}{k} \to \mathbf E[V^j(i)] \quad \text{and} 
     <iframe src="./viewer.html" class="markov-embed-frame-large-ish" id="sample-proof-1"></iframe>
   </div>
 </div>
-<p>Now, as $n$ gets large, the number of direct transitions from $i$ to $j$ will converge to exactly a $P_{ij}$ fraction of the number of visits to state $i$ (this can also be seen in the simulation!):<br>
+<p>Now, as $n$ gets large, the number of direct transitions from $i$ to $j$ will converge to exactly a $P_{ij}$ fraction of the number of visits to state $i$ (this can also be seen in the simulation!):
 $$T_n(i,j) \sim P_{ij} \cdot S_n(i).$$ (Recall that $\sim$ means that the expressions converge as $n \to \infty$.<sup class="footnote-ref"><a href="#fn3" id="fnref3:1">[3:1]</a></sup>)</p>
-<p>Thus, using the fact that $\mathbf x(j)$ is the limiting fraction of time at state $j$:<br>
+<p>Thus, using the fact that $\mathbf x(j)$ is the limiting fraction of time at state $j$:
 $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \sum_i \frac{T_n(i,j)}{n} = \sum_i \lim_{n \to \infty} \frac{P_{ij} \cdot S_n(i)}{n} = \sum_i P_{ij} \mathbf x(i).$$</p>
 <p>Since this holds for any state $j$, we have $\mathbf x(j) = (\mathbf x P)_j$ for all $j$, which means $\mathbf x = \mathbf x P$.</p>
 <p>Therefore, the limiting time-average distribution is stationary if it exists.</p>
