@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markov Chain Visualization</title>
+  <style>
+    /* Complete Open Color palette from https://yeun.github.io/open-color/ */
+    :root {
+      /* Gray */
+      --oc-gray-0: #f8f9fa;
+      --oc-gray-1: #f1f3f5;
+      --oc-gray-2: #e9ecef;
+      --oc-gray-3: #dee2e6;
+      --oc-gray-4: #ced4da;
+      --oc-gray-5: #adb5bd;
+      --oc-gray-6: #868e96;
+      --oc-gray-7: #495057;
+      --oc-gray-8: #343a40;
+      --oc-gray-9: #212529;
+      
+      /* Red */
+      --oc-red-0: #fff5f5;
+      --oc-red-1: #ffe3e3;
+      --oc-red-2: #ffc9c9;
+      --oc-red-3: #ffa8a8;
+      --oc-red-4: #ff8787;
+      --oc-red-5: #ff6b6b;
+      --oc-red-6: #fa5252;
+      --oc-red-7: #f03e3e;
+      --oc-red-8: #e03131;
+      --oc-red-9: #c92a2a;
+      
+      /* Pink */
+      --oc-pink-0: #fff0f6;
+      --oc-pink-1: #ffdeeb;
+      --oc-pink-2: #fcc2d7;
+      --oc-pink-3: #faa2c1;
+      --oc-pink-4: #f783ac;
+      --oc-pink-5: #f06595;
+      --oc-pink-6: #e64980;
+      --oc-pink-7: #d6336c;
+      --oc-pink-8: #c2255c;
+      --oc-pink-9: #a61e4d;
+      
+      /* Grape */
+      --oc-grape-0: #f8f0fc;
+      --oc-grape-1: #f3d9fa;
+      --oc-grape-2: #eebefa;
+      --oc-grape-3: #e599f7;
+      --oc-grape-4: #da77f2;
+      --oc-grape-5: #cc5de8;
+      --oc-grape-6: #be4bdb;
+      --oc-grape-7: #ae3ec9;
+      --oc-grape-8: #9c36b5;
+      --oc-grape-9: #862e9c;
+      
+      /* Violet */
+      --oc-violet-0: #f3f0ff;
+      --oc-violet-1: #e5dbff;
+      --oc-violet-2: #d0bfff;
+      --oc-violet-3: #b197fc;
+      --oc-violet-4: #9775fa;
+      --oc-violet-5: #845ef7;
+      --oc-violet-6: #7950f2;
+      --oc-violet-7: #7048e8;
+      --oc-violet-8: #6741d9;
+      --oc-violet-9: #5f3dc4;
+      
+      /* Indigo */
+      --oc-indigo-0: #edf2ff;
+      --oc-indigo-1: #dbe4ff;
+      --oc-indigo-2: #bac8ff;
+      --oc-indigo-3: #91a7ff;
+      --oc-indigo-4: #748ffc;
+      --oc-indigo-5: #5c7cfa;
+      --oc-indigo-6: #4c6ef5;
+      --oc-indigo-7: #4263eb;
+      --oc-indigo-8: #3b5bdb;
+      --oc-indigo-9: #364fc7;
+      
+      /* Blue */
+      --oc-blue-0: #e7f5ff;
+      --oc-blue-1: #d0ebff;
+      --oc-blue-2: #a5d8ff;
+      --oc-blue-3: #74c0fc;
+      --oc-blue-4: #4dabf7;
+      --oc-blue-5: #339af0;
+      --oc-blue-6: #228be6;
+      --oc-blue-7: #1c7ed6;
+      --oc-blue-8: #1971c2;
+      --oc-blue-9: #1864ab;
+      
+      /* Cyan */
+      --oc-cyan-0: #e3fafc;
+      --oc-cyan-1: #c5f6fa;
+      --oc-cyan-2: #99e9f2;
+      --oc-cyan-3: #66d9e8;
+      --oc-cyan-4: #3bc9db;
+      --oc-cyan-5: #22b8cf;
+      --oc-cyan-6: #15aabf;
+      --oc-cyan-7: #1098ad;
+      --oc-cyan-8: #0c8599;
+      --oc-cyan-9: #0b7285;
+      
+      /* Teal */
+      --oc-teal-0: #e6fcf5;
+      --oc-teal-1: #c3fae8;
+      --oc-teal-2: #96f2d7;
+      --oc-teal-3: #63e6be;
+      --oc-teal-4: #38d9a9;
+      --oc-teal-5: #20c997;
+      --oc-teal-6: #12b886;
+      --oc-teal-7: #0ca678;
+      --oc-teal-8: #099268;
+      --oc-teal-9: #087f5b;
+      
+      /* Green */
+      --oc-green-0: #ebfbee;
+      --oc-green-1: #d3f9d8;
+      --oc-green-2: #b2f2bb;
+      --oc-green-3: #8ce99a;
+      --oc-green-4: #69db7c;
+      --oc-green-5: #51cf66;
+      --oc-green-6: #40c057;
+      --oc-green-7: #37b24d;
+      --oc-green-8: #2f9e44;
+      --oc-green-9: #2b8a3e;
+      
+      /* Lime */
+      --oc-lime-0: #f4fce3;
+      --oc-lime-1: #e9fac8;
+      --oc-lime-2: #d8f5a2;
+      --oc-lime-3: #c0eb75;
+      --oc-lime-4: #a9e34b;
+      --oc-lime-5: #94d82d;
+      --oc-lime-6: #82c91e;
+      --oc-lime-7: #74b816;
+      --oc-lime-8: #66a80f;
+      --oc-lime-9: #5c940d;
+      
+      /* Yellow */
+      --oc-yellow-0: #fff9db;
+      --oc-yellow-1: #fff3bf;
+      --oc-yellow-2: #ffec99;
+      --oc-yellow-3: #ffe066;
+      --oc-yellow-4: #ffd43b;
+      --oc-yellow-5: #fcc419;
+      --oc-yellow-6: #fab005;
+      --oc-yellow-7: #f59f00;
+      --oc-yellow-8: #f08c00;
+      --oc-yellow-9: #e67700;
+      
+      /* Orange */
+      --oc-orange-0: #fff4e6;
+      --oc-orange-1: #ffe8cc;
+      --oc-orange-2: #ffd8a8;
+      --oc-orange-3: #ffc078;
+      --oc-orange-4: #ffa94d;
+      --oc-orange-5: #ff922b;
+      --oc-orange-6: #fd7e14;
+      --oc-orange-7: #f76707;
+      --oc-orange-8: #e8590c;
+      --oc-orange-9: #d9480f;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+      background-color: var(--oc-gray-0);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      color: var(--oc-gray-9);
+    }
+
+    /* Main layout */
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    /* Visualization (fills available space above controls) */
+    .visualization-container {
+      flex: 1;
+      position: relative;
+      background: white;
+      overflow: hidden;
+      cursor: grab;
+    }
+
+    .visualization-container.dragging {
+      cursor: grabbing;
+    }
+
+    .visualization-container.no-pan {
+      cursor: default;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      user-select: none;
+    }
+
+    .token {
+      pointer-events: none;
+    }
+
+    /* Floating bottom controls */
+    .controls-panel {
+      position: absolute;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: white;
+      border: 1px solid var(--oc-gray-3);
+      border-radius: 12px;
+      z-index: 5;
+    }
+
+    /* Right-side sample-proof panel */
+    .proof-panel {
+      position: absolute;
+      top: 50%;
+      right: 100px;
+      width: clamp(240px, 22vw, 320px);
+      max-height: min(60vh, 520px);
+      max-width: calc(100% - 24px);
+      background: white;
+      border: 1px solid var(--oc-gray-3);
+      border-radius: 12px;
+      padding: 12px 12px 10px 12px;
+      z-index: 6;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      transform: translateY(-50%);
+      overflow-x: hidden;
+    }
+
+    .proof-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .proof-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--oc-green-7);
+    }
+
+    .proof-summary {
+      font-size: 12px;
+      color: var(--oc-gray-7);
+      margin-bottom: 8px;
+    }
+
+    .proof-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      table-layout: fixed;
+    }
+
+    .proof-table th, .proof-table td {
+      border-bottom: 1px solid var(--oc-gray-2);
+      padding: 8px 6px;
+      vertical-align: middle;
+    }
+    .proof-table td { text-align: center; }
+    .proof-table td:first-child { text-align: center; }
+    .proof-table th:nth-child(3) { white-space: nowrap; }
+    .proof-table td:nth-child(2) { white-space: nowrap; overflow-wrap: normal; word-break: normal; }
+
+    .proof-table th {
+      color: var(--oc-gray-7);
+      font-weight: 700;
+      font-size: 10px;
+      letter-spacing: 0.3px;
+      background: var(--oc-gray-1);
+    }
+
+    /* Wrapper to draw a full-height vertical separator */
+    .proof-table-wrapper {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      border: 1px solid var(--oc-gray-3);
+      border-radius: 10px;
+      background: white;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
+    }
+
+    .proof-table tbody tr:nth-child(odd) { background: var(--oc-gray-0); }
+    .proof-table tbody tr:hover { background: var(--oc-green-0); }
+
+    
+
+    .proof-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    /* Prevent horizontal scrolling by allowing content to wrap */
+    .proof-table th, .proof-table td {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .proof-empty {
+      font-size: 12px;
+      color: var(--oc-gray-6);
+      padding: 8px 0;
+    }
+
+    /* Control sections */
+    .control-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--oc-gray-7);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    /* Inline controls row */
+
+    .control-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      background: var(--oc-green-6);
+      color: white;
+    }
+
+    .control-btn:hover {
+      transform: scale(1.05);
+      background: var(--oc-green-7);
+    }
+
+    .control-btn:active {
+      transform: scale(0.98);
+    }
+
+    .control-btn.primary {
+      background: var(--oc-green-6);
+    }
+
+    .control-btn.primary:hover {
+      background: var(--oc-green-7);
+      box-shadow: 0 4px 16px rgba(64, 192, 87, 0.3);
+    }
+
+    .control-btn.reset {
+      background: var(--oc-green-5);
+    }
+
+    .control-btn.reset:hover {
+      background: var(--oc-green-6);
+    }
+
+    .control-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .control-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .control-btn.primary svg { width: 22px; height: 22px; }
+
+    /* Mode selector */
+    .mode-selector {
+      display: flex;
+      background: var(--oc-gray-3);
+      border-radius: 8px;
+      padding: 4px;
+    }
+
+    .mode-option {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--oc-gray-7);
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .mode-option.active {
+      background: white;
+      color: var(--oc-green-7);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Sliders */
+    .slider-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slider-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--oc-gray-8);
+    }
+
+    .slider-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--oc-green-7);
+      min-width: 50px;
+      text-align: right;
+    }
+
+    .slider {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--oc-gray-3);
+      border-radius: 3px;
+      outline: none;
+      transition: background 0.2s;
+    }
+
+    .slider:hover {
+      background: var(--oc-gray-4);
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--oc-green-6);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      transition: all 0.2s;
+    }
+
+    .slider::-webkit-slider-thumb:hover {
+      background: var(--oc-green-7);
+      transform: scale(1.1);
+    }
+
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: var(--oc-green-6);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .slider::-moz-range-thumb:hover {
+      background: var(--oc-green-7);
+      transform: scale(1.1);
+    }
+
+    /* Info display */
+    .info-display {
+      background: var(--oc-green-0);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 11px;
+      color: var(--oc-gray-7);
+      line-height: 1.4;
+      border: 1px solid var(--oc-green-2);
+    }
+
+    .info-display strong {
+      color: var(--oc-green-8);
+    }
+
+
+
+    /* Responsive */
+    @media (max-width: 1200px), (max-height: 400px) {
+      .controls-panel { padding: 6px 8px; gap: 8px; bottom: 8px; }
+      .control-btn { width: 36px; height: 36px; }
+      .control-btn svg { width: 16px; height: 16px; }
+      /* Place proof panel above the canvas and make it full-width with margins */
+      .proof-panel {
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        transform: none;
+        width: min(560px, 92vw);
+        max-height: 55vh;
+        margin: 8px auto;
+        order: -1;
+        border: none;
+        box-shadow: none;
+        background: transparent;
+        padding: 0;
+        border-radius: 0;
+      }
+      .proof-title { font-size: 16px; }
+      .proof-table { font-size: 11px; }
+      .proof-table th { font-size: 9px; }
+      .proof-table th, .proof-table td { padding: 6px 6px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <!-- Left side - Visualization -->
+    <div class="visualization-container" id="vizContainer">
+      <svg id="canvas">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#374151"></polygon>
+          </marker>
+        </defs>
+        <g id="mainGroup">
+          <g id="edgesLayer"></g>
+          <g id="statesLayer"></g>
+          <g id="tokensLayer"></g>
+          <g id="uiLayer"></g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Right-side Sample-Proof panel -->
+    <div id="proofPanel" class="proof-panel" style="display: none;">
+      <div class="proof-header">
+        <div class="proof-title">Transitions to j</div>
+      </div>
+      <div class="proof-table-wrapper">
+      <table class="proof-table">
+        <thead>
+          <tr>
+            <th>State i</th>
+            <th>T<sub>n</sub>(i, j) / S<sub>n</sub>(i)</th>
+            <th>P<sub>ij</sub></th>
+          </tr>
+        </thead>
+        <tbody id="proofTableBody">
+        </tbody>
+      </table>
+      </div>
+      <div id="proofEmpty" class="proof-empty" style="display:none;"></div>
+    </div>
+
+    <!-- Bottom Controls -->
+    <div class="controls-panel">
+      <button id="stepBtn" class="control-btn" title="Step Forward">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+      <button id="runBtn" class="control-btn primary" title="Run/Pause">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </button>
+      <button id="resetBtn" class="control-btn reset" style="width: auto; padding: 0 10px; height: 32px; border-radius: 6px; font-size: 12px;">
+        Reset
+      </button>
+      <button id="sampleStationaryBtn" class="control-btn" style="display: none; width: auto; padding: 0 10px; height: 32px; border-radius: 6px; font-size: 12px; background: var(--oc-green-5);">
+        Sample Yₙ from stationary
+      </button>
+      <div class="mode-selector" id="speedSegment">
+        <button class="mode-option active" id="speedSlow">Slow</button>
+        <button class="mode-option" id="speedFast">Fast</button>
+        <button class="mode-option" id="speedFastest">Faster</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="markov-chains.js"></script>
+  <script>
+    // Default configuration using Open Color palette
+    // const DEFAULT_CONFIG = {
+    //   states: [
+    //     { id: 1, x: 300, y: 200, label: "Sunny", color: { fill: "#ffd43b", stroke: "#fab005" } }, // yellow-4, yellow-6
+    //     { id: 2, x: 500, y: 200, label: "Cloudy", color: { fill: "#868e96", stroke: "#495057" } }, // gray-6, gray-7
+    //     { id: 3, x: 400, y: 350, label: "Rainy", color: { fill: "#339af0", stroke: "#1c7ed6" } }  // blue-5, blue-7
+    //   ],
+    //   edges: [
+    //     { id: 101, from: 1, to: 1, weight: "0.7", controlX: 300, controlY: 100 },
+    //     { id: 102, from: 1, to: 2, weight: "0.2", controlX: 400, controlY: 150 },
+    //     { id: 103, from: 1, to: 3, weight: "0.1", controlX: 350, controlY: 275 },
+    //     { id: 201, from: 2, to: 1, weight: "0.3", controlX: 400, controlY: 250 },
+    //     { id: 202, from: 2, to: 2, weight: "0.4", controlX: 500, controlY: 100 },
+    //     { id: 203, from: 2, to: 3, weight: "0.3", controlX: 450, controlY: 275 },
+    //     { id: 301, from: 3, to: 1, weight: "0.2", controlX: 350, controlY: 275 },
+    //     { id: 302, from: 3, to: 2, weight: "0.3", controlX: 450, controlY: 275 },
+    //     { id: 303, from: 3, to: 3, weight: "0.5", controlX: 400, controlY: 450 }
+    //   ]
+    // };
+
+    const DEFAULT_CONFIG = {
+      "states": [
+        {
+          "id": 1754440269128,
+          "x": 266.7060276555876,
+          "y": 160.14800274219692,
+          "label": "State 1",
+          "color": {
+            "name": "Blue",
+            "fill": "#3B82F6",
+            "stroke": "#1E40AF"
+          }
+        },
+        {
+          "id": 1754440269261,
+          "x": 319.00566722030067,
+          "y": 415.1123349956235,
+          "label": "State 2",
+          "color": {
+            "name": "Blue",
+            "fill": "#3B82F6",
+            "stroke": "#1E40AF"
+          }
+        },
+        {
+          "id": 1754440275461,
+          "x": 424.348308319755,
+          "y": 241.6605689766484,
+          "label": "State 3",
+          "color": {
+            "name": "Blue",
+            "fill": "#3B82F6",
+            "stroke": "#1E40AF"
+          }
+        },
+        {
+          "id": 1754440275727,
+          "x": 565.887559874556,
+          "y": 375.459795811038,
+          "label": "State 4",
+          "color": {
+            "name": "Blue",
+            "fill": "#3B82F6",
+            "stroke": "#1E40AF"
+          }
+        },
+        {
+          "id": 1754440275878,
+          "x": 570.4862776573817,
+          "y": 113.50757703485056,
+          "label": "State 5",
+          "color": {
+            "name": "Blue",
+            "fill": "#3B82F6",
+            "stroke": "#1E40AF"
+          }
+        },
+        {
+          "id": 1754440276011,
+          "x": 660.47111481524,
+          "y": 247.33063174361826,
+          "label": "State 6",
+          "color": {
+            "name": "Blue",
+            "fill": "#3B82F6",
+            "stroke": "#1E40AF"
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": 1754440271228,
+          "from": 1754440269128,
+          "to": 1754440269261,
+          "weight": "1",
+          "controlX": 91.9229175163373,
+          "controlY": 342.6252483447562
+        },
+        {
+          "id": 1754440284828,
+          "from": 1754440269261,
+          "to": 1754440275461,
+          "weight": "0.5",
+          "controlX": 440.6366473191203,
+          "controlY": 375.0245712580236
+        },
+        {
+          "id": 1754440301845,
+          "from": 1754440269261,
+          "to": 1754440275727,
+          "weight": "0.5",
+          "controlX": 447.2040432376083,
+          "controlY": 424.90644458292593
+        },
+        {
+          "id": 1754440305978,
+          "from": 1754440275461,
+          "to": 1754440269128,
+          "weight": "0.25",
+          "controlX": 358.30034966886984,
+          "controlY": 158.37345864555652
+        },
+        {
+          "id": 1754440310362,
+          "from": 1754440275461,
+          "to": 1754440275878,
+          "weight": "0.25",
+          "controlX": 518.4433982926852,
+          "controlY": 187.93228922109074
+        },
+        {
+          "id": 1754440314462,
+          "from": 1754440275461,
+          "to": 1754440269261,
+          "weight": "0.5",
+          "controlX": 272.37820603322723,
+          "controlY": 290.9979598318097
+        },
+        {
+          "id": 1754440329195,
+          "from": 1754440275727,
+          "to": 1754440276011,
+          "weight": "1",
+          "controlX": 637.3154770162648,
+          "controlY": 329.2122494949852
+        },
+        {
+          "id": 1754440332877,
+          "from": 1754440276011,
+          "to": 1754440275878,
+          "weight": "1",
+          "controlX": 640.3739415007965,
+          "controlY": 163.679129382649
+        },
+        {
+          "id": 1754440335662,
+          "from": 1754440275878,
+          "to": 1754440269128,
+          "weight": "1",
+          "controlX": 414.04349580640024,
+          "controlY": 107.175246732744
+        }
+      ]
+    }
+
+
+
+    // Initialize viewer
+    const svg = document.getElementById('canvas');
+    const markov = new MarkovChains(svg, { 
+      viewerMode: true,
+      totalTokens: 200
+    });
+
+    // Panning functionality
+    const vizContainer = document.getElementById('vizContainer');
+    const mainGroup = document.getElementById('mainGroup');
+    let isPanning = false;
+    let startX = 0;
+    let startY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let allowPanning = true;
+    let pendingCenter = null; // { x, y } in diagram coordinates
+    let pendingStartId = null; // numeric state id
+    let pendingStartLabel = null; // string label
+    // Coupled-mode optional separate starts
+    let pendingBlackStartId = null;
+    let pendingGreenStartId = null;
+    let pendingBlackStartLabel = null;
+    let pendingGreenStartLabel = null;
+    // Sample-proof target (optional)
+    let pendingProofTargetId = null;
+    let pendingProofTargetLabel = null;
+
+    let currentScale = 1;
+
+    function updateTransform() {
+      mainGroup.setAttribute('transform', `translate(${currentX}, ${currentY}) scale(${currentScale})`);
+    }
+
+    function centerAt(x, y){
+      const rect = svg.getBoundingClientRect();
+      currentX = rect.width / 2 - currentScale * x;
+      currentY = rect.height / 2 - currentScale * y;
+      updateTransform();
+    }
+
+    function getContentBounds(pad = 60){
+      if (!markov.states || markov.states.length === 0) {
+        return { minX: 0, minY: 0, maxX: 800, maxY: 600 };
+      }
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      markov.states.forEach(s => {
+        if (typeof s.x !== 'number' || typeof s.y !== 'number') return;
+        minX = Math.min(minX, s.x);
+        minY = Math.min(minY, s.y);
+        maxX = Math.max(maxX, s.x);
+        maxY = Math.max(maxY, s.y);
+      });
+      if (!Number.isFinite(minX) || !Number.isFinite(minY) || !Number.isFinite(maxX) || !Number.isFinite(maxY)) {
+        return { minX: 0, minY: 0, maxX: 800, maxY: 600 };
+      }
+      return { minX: minX - pad, minY: minY - pad, maxX: maxX + pad, maxY: maxY + pad };
+    }
+
+    function fitContentToViewport(){
+      const rect = svg.getBoundingClientRect();
+      const bounds = getContentBounds();
+      const contentW = Math.max(1, bounds.maxX - bounds.minX);
+      const contentH = Math.max(1, bounds.maxY - bounds.minY);
+      const sW = rect.width / contentW;
+      const sH = rect.height / contentH;
+      const scale = Math.min(sW, sH, 1); // shrink-to-fit (do not upscale)
+      currentScale = scale;
+      const cx = (bounds.minX + bounds.maxX) / 2;
+      const cy = (bounds.minY + bounds.maxY) / 2;
+      currentX = rect.width / 2 - currentScale * cx;
+      currentY = rect.height / 2 - currentScale * cy;
+      updateTransform();
+    }
+
+    function updatePanningCursor(){
+      vizContainer.classList.toggle('no-pan', !allowPanning);
+    }
+
+    function findStateIdByLabel(label){
+      if (!label) return null;
+      const st = markov.states.find(s => (s.label || '').trim() === label.trim());
+      return st ? st.id : null;
+    }
+
+    function applyCoupledStart(opts = {}){
+      let blackId = opts.blackId ?? pendingBlackStartId ?? null;
+      let greenId = opts.greenId ?? pendingGreenStartId ?? null;
+      const blackLabel = opts.blackLabel ?? pendingBlackStartLabel ?? null;
+      const greenLabel = opts.greenLabel ?? pendingGreenStartLabel ?? null;
+
+      if (!blackId && blackLabel) blackId = findStateIdByLabel(blackLabel);
+      if (!greenId && greenLabel) greenId = findStateIdByLabel(greenLabel);
+
+      if (!blackId && greenId) blackId = greenId;
+      if (!greenId && blackId) greenId = blackId;
+      if (!blackId && !greenId) return;
+
+      const existsBlack = markov.states.some(s => s.id === blackId);
+      const existsGreen = markov.states.some(s => s.id === greenId);
+      if (!existsBlack || !existsGreen) return;
+
+      if (!markov.markovMode) markov.enterMarkovMode();
+      markov.setCoupledMode(true);
+      markov.resetCoupledTokens(blackId, greenId);
+      markov.render();
+
+      if (initialBlackStartId == null) initialBlackStartId = blackId;
+      if (initialGreenStartId == null) initialGreenStartId = greenId;
+    }
+
+    function applyStartStateById(stateId){
+      if (!stateId) return;
+      const exists = markov.states.some(s => s.id === stateId);
+      if (!exists) return;
+      if (!markov.markovMode) markov.enterMarkovMode();
+      if (markov.coupledMode) {
+        const greenStart = markov.greenTokenStateId || stateId;
+        markov.resetCoupledTokens(stateId, greenStart);
+      } else if (markov.distributionMode) {
+        markov.resetTokens(markov.TOTAL_TOKENS, stateId);
+      } else {
+        markov.tokenStateId = stateId;
+        markov.visits = {};
+        markov.states.forEach(s => markov.visits[s.id] = 0);
+        markov.visits[markov.tokenStateId] = 1;
+        if (markov.tokens && markov.tokens.length > 0) {
+          markov.tokens[0].stateId = stateId;
+          markov.positionTokensAtState(markov.tokens, stateId);
+        } else {
+          markov.resetTokens(1, stateId);
+        }
+      }
+      markov.render();
+    }
+
+    vizContainer.addEventListener('mousedown', (e) => {
+      if (!allowPanning) return;
+      // Don't start panning if clicking on a state
+      if (e.target.tagName === 'circle' && e.target.parentElement.parentElement.id === 'statesLayer') {
+        return;
+      }
+      isPanning = true;
+      startX = e.clientX - currentX;
+      startY = e.clientY - currentY;
+      vizContainer.classList.add('dragging');
+      e.preventDefault();
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isPanning) return;
+      currentX = e.clientX - startX;
+      currentY = e.clientY - startY;
+      updateTransform();
+    });
+
+    window.addEventListener('mouseup', () => {
+      isPanning = false;
+      vizContainer.classList.remove('dragging');
+    });
+
+    // Touch support for mobile
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    vizContainer.addEventListener('touchstart', (e) => {
+      if (!allowPanning) return;
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        touchStartX = touch.clientX - currentX;
+        touchStartY = touch.clientY - currentY;
+      }
+    });
+
+    vizContainer.addEventListener('touchmove', (e) => {
+      if (!allowPanning) return;
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        currentX = touch.clientX - touchStartX;
+        currentY = touch.clientY - touchStartY;
+        updateTransform();
+        e.preventDefault();
+      }
+    });
+
+    // DOM references
+    // Mode buttons removed; mode will be controlled programmatically
+    const stepBtn = document.getElementById('stepBtn');
+    const runBtn = document.getElementById('runBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const sampleStationaryBtn = document.getElementById('sampleStationaryBtn');
+    const speedSlow = document.getElementById('speedSlow');
+    const speedFast = document.getElementById('speedFast');
+    const speedFastest = document.getElementById('speedFastest');
+    // Update proof panel whenever we render
+    markov.onRender = () => {
+      if (markov.sampleProofMode) updateProofPanel();
+    };
+
+
+    // Sample-proof panel DOM
+    const proofPanel = document.getElementById('proofPanel');
+    const proofTableBody = document.getElementById('proofTableBody');
+    const proofEmpty = document.getElementById('proofEmpty');
+    
+
+    let isRunning = false;
+    let runInterval = null;
+    let initialStartId = null; // remember the initial start state for reset
+    let initialBlackStartId = null; // for coupled mode reset
+    let initialGreenStartId = null; // for coupled mode reset
+
+    // Initialize viewer
+    function initializeViewer(config) {
+      try {
+        markov.loadConfig(config);
+        
+        // Fit content to viewport; then optionally override center
+        fitContentToViewport();
+        if (pendingCenter && typeof pendingCenter.x === 'number' && typeof pendingCenter.y === 'number') {
+          centerAt(pendingCenter.x, pendingCenter.y);
+        }
+        
+        if (markov.validateMarkov()) {
+          markov.enterMarkovMode();
+          markov.showTokensLayer();
+        } else {
+          console.error('Invalid Markov chain configuration');
+        }
+
+        // Do not apply pending start yet; we first want to set mode outside
+        // initialStartId will be set after applying explicit start outside
+      } catch (e) {
+        console.error('Failed to load configuration:', e);
+      }
+    }
+
+    // Update info display
+    // Info display removed
+
+    // Handle state clicks
+    markov.onStateClick = (stateId, event) => {
+      if (!markov.markovMode) return;
+      
+      if (markov.coupledMode) {
+        // Handled in markov-chains.js handleStateClick
+      } else if (markov.distributionMode) {
+        markov.resetTokens(markov.TOTAL_TOKENS, stateId);
+      } else {
+        markov.tokenStateId = stateId;
+        markov.visits = {};
+        markov.states.forEach(s => markov.visits[s.id] = 0);
+        markov.visits[markov.tokenStateId] = 1;
+        if (markov.tokens[0]) {
+          markov.tokens[0].stateId = stateId;
+          markov.positionTokensAtState(markov.tokens, stateId);
+        }
+      }
+      markov.render();
+    };
+
+    // Mode toggle
+    function setMode(mode) {
+      if (mode === 'sample') {
+        markov.setDistributionMode(false);
+        markov.setCoupledMode(false);
+        markov.setCoupledSampleMode(false);
+        markov.setSampleProofMode(false);
+        if (sampleStationaryBtn) sampleStationaryBtn.style.display = 'none';
+        if (proofPanel) proofPanel.style.display = 'none';
+        // Capture a sane start for resets in sample mode
+        const sId = (markov.tokens && markov.tokens[0] ? markov.tokens[0].stateId : null)
+          ?? markov.tokenStateId
+          ?? (markov.states[0] ? markov.states[0].id : null);
+        if (sId != null) initialStartId = sId;
+      } else if (mode === 'distribution') {
+        markov.setDistributionMode(true);
+        markov.setCoupledSampleMode(false);
+        markov.setSampleProofMode(false);
+        if (sampleStationaryBtn) sampleStationaryBtn.style.display = 'none';
+        if (proofPanel) proofPanel.style.display = 'none';
+        // Capture a sane start for resets in distribution mode
+        const sId = (markov.tokens && markov.tokens[0] ? markov.tokens[0].stateId : null)
+          ?? markov.tokenStateId
+          ?? (markov.states[0] ? markov.states[0].id : null);
+        if (sId != null) initialStartId = sId;
+      } else if (mode === 'coupled') {
+        markov.setCoupledMode(true);
+        markov.setCoupledSampleMode(false);
+        markov.setSampleProofMode(false);
+        if (sampleStationaryBtn) sampleStationaryBtn.style.display = '';
+        if (proofPanel) proofPanel.style.display = 'none';
+        // If separate starts provided, apply them
+        if (pendingBlackStartId || pendingGreenStartId || pendingBlackStartLabel || pendingGreenStartLabel) {
+          applyCoupledStart();
+        } else if (pendingStartId || pendingStartLabel) {
+          const id = pendingStartId || findStateIdByLabel(pendingStartLabel);
+          if (id) applyCoupledStart({ blackId: id, greenId: id });
+        }
+      } else if (mode === 'coupled-sample') {
+        // Enable coupled sample mode with optional separate starts
+        if (sampleStationaryBtn) sampleStationaryBtn.style.display = '';
+        if (proofPanel) proofPanel.style.display = 'none';
+        let bId = pendingBlackStartId || (pendingBlackStartLabel ? findStateIdByLabel(pendingBlackStartLabel) : null);
+        let gId = pendingGreenStartId || (pendingGreenStartLabel ? findStateIdByLabel(pendingGreenStartLabel) : null);
+        if (!bId && pendingStartId) bId = pendingStartId;
+        if (!gId && pendingStartId) gId = pendingStartId;
+        if (!bId && pendingStartLabel) bId = findStateIdByLabel(pendingStartLabel);
+        if (!gId && pendingStartLabel) gId = findStateIdByLabel(pendingStartLabel);
+        markov.setCoupledSampleMode(true, bId, gId);
+        // Capture initial starts for reset
+        if (bId != null) initialBlackStartId = bId;
+        if (gId != null) initialGreenStartId = gId;
+      } else if (mode === 'coupled-sample-split') {
+        // Start like coupled-sample, but auto-split to coupled clusters on first meeting
+        if (sampleStationaryBtn) sampleStationaryBtn.style.display = '';
+        if (proofPanel) proofPanel.style.display = 'none';
+        let bId = pendingBlackStartId || (pendingBlackStartLabel ? findStateIdByLabel(pendingBlackStartLabel) : null);
+        let gId = pendingGreenStartId || (pendingGreenStartLabel ? findStateIdByLabel(pendingGreenStartLabel) : null);
+        if (!bId && pendingStartId) bId = pendingStartId;
+        if (!gId && pendingStartId) gId = pendingStartId;
+        if (!bId && pendingStartLabel) bId = findStateIdByLabel(pendingStartLabel);
+        if (!gId && pendingStartLabel) gId = findStateIdByLabel(pendingStartLabel);
+        markov.setCoupledSampleSplitMode(true, bId, gId);
+        if (bId != null) initialBlackStartId = bId;
+        if (gId != null) initialGreenStartId = gId;
+      } else if (mode === 'sample-proof') {
+        // Enable sample-proof mode
+        markov.setDistributionMode(false);
+        markov.setCoupledMode(false);
+        markov.setCoupledSampleMode(false);
+        // Choose target from pending or default
+        let tId = pendingProofTargetId || (pendingProofTargetLabel ? findStateIdByLabel(pendingProofTargetLabel) : null);
+        if (!tId) tId = (markov.states[0] ? markov.states[0].id : null);
+        markov.setSampleProofMode(true, tId);
+        if (proofPanel) proofPanel.style.display = '';
+        updateProofPanel();
+      }
+    }
+
+    // Step control
+    stepBtn.addEventListener('click', () => {
+      if (!markov.animatingTokens) {
+        markov.stepForward();
+      }
+    });
+
+    // Run/Stop control
+    function startRunning() {
+      if (!markov.markovMode || isRunning) return;
+      isRunning = true;
+      runBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <rect x="6" y="6" width="4" height="12"/>
+          <rect x="14" y="6" width="4" height="12"/>
+        </svg>
+      `;
+      stepBtn.disabled = true;
+      runInterval = setInterval(() => {
+        if (!markov.animatingTokens) {
+          markov.stepForward();
+        }
+      }, markov.stepDelay + 100);
+    }
+
+    function stopRunning() {
+      if (!isRunning) return;
+      isRunning = false;
+      clearInterval(runInterval);
+      runInterval = null;
+      runBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      `;
+      stepBtn.disabled = false;
+    }
+    // Proof panel helpers
+    function updateProofPanel() {
+      if (!proofPanel || !markov.sampleProofMode) return;
+      const targetId = markov.proofTargetStateId;
+      const total = markov.proofTotalArrivals || 0;
+      // Build table body
+      if (proofTableBody) {
+        while (proofTableBody.firstChild) proofTableBody.removeChild(proofTableBody.firstChild);
+        const entries = Object.entries(markov.proofIncomingCounts || {});
+        entries.forEach(([fromIdStr, cnt]) => {
+          const fromId = parseInt(fromIdStr);
+          const fromState = markov.states.find(s => s.id === fromId);
+          const tr = document.createElement('tr');
+          const tdFrom = document.createElement('td');
+          tdFrom.textContent = fromState ? (fromState.label || fromIdStr) : fromIdStr;
+          // Visits to A (source visits count). Use time-average visits field from sample/tracking
+          const visitsA = markov.visits && Number.isFinite(markov.visits[fromId]) ? markov.visits[fromId] : 0;
+          // P_AB: edge probability from A to B
+          const edge = markov.edges.find(e => e.from === fromId && e.to === targetId);
+          const pVal = edge ? parseFloat(edge.weight) : 0;
+          const ratio = (visitsA > 0) ? ((cnt || 0) / visitsA) : 0;
+          const tdCombined = document.createElement('td');
+          tdCombined.textContent = `${cnt || 0} / ${visitsA} : ${ratio.toFixed(3)}`;
+          const tdPab = document.createElement('td');
+          tdPab.textContent = Number.isFinite(pVal) ? pVal.toFixed(3) : '0.000';
+          tr.appendChild(tdFrom);
+          tr.appendChild(tdCombined);
+          tr.appendChild(tdPab);
+          proofTableBody.appendChild(tr);
+        });
+        if (proofEmpty) proofEmpty.style.display = entries.length === 0 ? '' : 'none';
+      }
+      
+    }
+
+
+    runBtn.addEventListener('click', () => {
+      isRunning ? stopRunning() : startRunning();
+    });
+
+    function performReset(){
+      if (!markov.markovMode) return false;
+      if (isRunning) stopRunning();
+      // Always reset to the originally provided iframe start params
+      let startState = initialStartId
+        ?? pendingStartId
+        ?? (pendingStartLabel ? findStateIdByLabel(pendingStartLabel) : null)
+        ?? markov.tokenStateId
+        ?? (markov.states[0] ? markov.states[0].id : null);
+      if (startState == null) return false;
+      if (markov.coupledMode) {
+        const bId = (initialBlackStartId
+          ?? pendingBlackStartId
+          ?? (pendingBlackStartLabel ? findStateIdByLabel(pendingBlackStartLabel) : null)
+          ?? startState);
+        const gId = (initialGreenStartId
+          ?? pendingGreenStartId
+          ?? (pendingGreenStartLabel ? findStateIdByLabel(pendingGreenStartLabel) : null)
+          ?? startState);
+        markov.resetCoupledTokens(bId, gId);
+      } else if (markov.distributionMode) {
+        markov.resetTokens(markov.TOTAL_TOKENS, startState);
+      } else if (markov.coupledSampleMode) {
+        // Re-enable coupled-sample with initial starts
+        let bId = (initialBlackStartId ?? pendingBlackStartId ?? startState);
+        let gId = (initialGreenStartId ?? pendingGreenStartId ?? startState);
+        markov.setCoupledSampleMode(true, bId, gId);
+        if (initialBlackStartId == null) initialBlackStartId = bId;
+        if (initialGreenStartId == null) initialGreenStartId = gId;
+      } else if (markov.coupledSampleSplitMode) {
+        // Re-enable coupled-sample-split with initial starts
+        let bId = (initialBlackStartId ?? pendingBlackStartId ?? startState);
+        let gId = (initialGreenStartId ?? pendingGreenStartId ?? startState);
+        markov.setCoupledSampleSplitMode(true, bId, gId);
+        if (initialBlackStartId == null) initialBlackStartId = bId;
+        if (initialGreenStartId == null) initialGreenStartId = gId;
+      } else if (markov.tripleClusterMode) {
+        // Reset back to pre-split three large tokens
+        let bId = (initialBlackStartId ?? pendingBlackStartId ?? startState);
+        let gId = (initialGreenStartId ?? pendingGreenStartId ?? startState);
+        markov.setCoupledSampleSplitMode(true, bId, gId);
+        if (initialBlackStartId == null) initialBlackStartId = bId;
+        if (initialGreenStartId == null) initialGreenStartId = gId;
+      } else if (markov.sampleProofMode) {
+        // Reset single-token sample at start and clear proof counts
+        markov.tokenStateId = startState;
+        markov.visits = {};
+        markov.states.forEach(s => markov.visits[s.id] = 0);
+        markov.visits[markov.tokenStateId] = 1;
+        markov.resetTokens(1, startState);
+        markov.resetSampleProofCounts();
+      } else {
+        markov.tokenStateId = startState;
+        markov.visits = {};
+        markov.states.forEach(s => markov.visits[s.id] = 0);
+        markov.visits[markov.tokenStateId] = 1;
+        markov.resetTokens(1, startState);
+      }
+      markov.render();
+      if (markov.sampleProofMode) updateProofPanel();
+      return true;
+    }
+
+    // Reset control
+    resetBtn.addEventListener('click', () => { performReset(); });
+
+    // Sample green from stationary (active in coupled, coupled-sample, coupled-sample-split)
+    sampleStationaryBtn.addEventListener('click', () => {
+      if (!markov.markovMode) return;
+      if (!markov.coupledMode && !markov.coupledSampleMode && !markov.coupledSampleSplitMode) return;
+      const ok = performReset();
+      if (!ok) return;
+      markov.sampleGreenFromStationary();
+    });
+
+    // Speed segmented control
+    function setSpeed(mode){
+      let delay = 700; // slow
+      if (mode === 'fast') delay = 350;
+      if (mode === 'fastest') delay = 50;
+      markov.setStepDelay(delay);
+      // Update UI
+      speedSlow.classList.toggle('active', mode === 'slow');
+      speedFast.classList.toggle('active', mode === 'fast');
+      speedFastest.classList.toggle('active', mode === 'fastest');
+      if (isRunning) {
+        clearInterval(runInterval);
+        runInterval = setInterval(() => {
+          if (!markov.animatingTokens) {
+            markov.stepForward();
+          }
+        }, delay + 100);
+      }
+    }
+    speedSlow.addEventListener('click', () => setSpeed('slow'));
+    speedFast.addEventListener('click', () => setSpeed('fast'));
+    speedFastest.addEventListener('click', () => setSpeed('fastest'));
+    setSpeed('slow');
+
+    // Listen for configuration from parent window
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'loadMarkovConfig' && event.data.config) {
+        // Optional extras: mode, center, allowPanning
+        if (typeof event.data.centerX === 'number' && typeof event.data.centerY === 'number') {
+          pendingCenter = { x: event.data.centerX, y: event.data.centerY };
+        }
+        if (typeof event.data.allowPanning === 'boolean') {
+          allowPanning = event.data.allowPanning;
+          updatePanningCursor();
+        }
+        if (typeof event.data.startStateId === 'number') {
+          pendingStartId = event.data.startStateId;
+        }
+        if (typeof event.data.startStateLabel === 'string') {
+          pendingStartLabel = event.data.startStateLabel;
+        }
+        if (typeof event.data.startBlackStateId === 'number') {
+          pendingBlackStartId = event.data.startBlackStateId;
+        }
+        if (typeof event.data.startGreenStateId === 'number') {
+          pendingGreenStartId = event.data.startGreenStateId;
+        }
+        if (typeof event.data.startBlackStateLabel === 'string') {
+          pendingBlackStartLabel = event.data.startBlackStateLabel;
+        }
+        if (typeof event.data.startGreenStateLabel === 'string') {
+          pendingGreenStartLabel = event.data.startGreenStateLabel;
+        }
+        if (typeof event.data.proofTargetStateId === 'number') {
+          pendingProofTargetId = event.data.proofTargetStateId;
+        }
+        if (typeof event.data.proofTargetStateLabel === 'string') {
+          pendingProofTargetLabel = event.data.proofTargetStateLabel;
+        }
+        initializeViewer(event.data.config);
+        if (event.data.mode) setMode(event.data.mode);
+        // If center provided post-init
+        if (pendingCenter && typeof pendingCenter.x === 'number' && typeof pendingCenter.y === 'number') {
+          centerAt(pendingCenter.x, pendingCenter.y);
+        }
+        // Apply start after mode is set, so distribution mode uses resetTokens
+        if (pendingStartId !== null) {
+          applyStartStateById(pendingStartId);
+          initialStartId = pendingStartId;
+        } else if (pendingStartLabel) {
+          const st = markov.states.find(s => (s.label || '').trim() === pendingStartLabel.trim());
+          if (st) {
+            applyStartStateById(st.id);
+            initialStartId = st.id;
+          }
+        }
+        // Apply coupled separate starts if already in coupled mode
+        if (markov.coupledMode && (pendingBlackStartId || pendingGreenStartId || pendingBlackStartLabel || pendingGreenStartLabel)) {
+          applyCoupledStart();
+        }
+        // Refresh panel if in proof mode
+        if (markov.sampleProofMode) {
+          updateProofPanel();
+        }
+      }
+    });
+
+    // Notify parent window that viewer is ready
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'markovViewerReady' }, '*');
+    }
+
+    // Check for config in URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const configParam = urlParams.get('config');
+    const modeParam = urlParams.get('mode');
+    const centerXParam = parseFloat(urlParams.get('centerX'));
+    const centerYParam = parseFloat(urlParams.get('centerY'));
+    const panParam = urlParams.get('panning') ?? urlParams.get('pan');
+    const startIdParam = parseInt(urlParams.get('startId')); 
+    const startLabelParam = urlParams.get('startLabel');
+    const blackIdParam = parseInt(urlParams.get('blackId'));
+    const greenIdParam = parseInt(urlParams.get('greenId'));
+    const blackLabelParam = urlParams.get('blackLabel');
+    const greenLabelParam = urlParams.get('greenLabel');
+    const proofTargetIdParam = parseInt(urlParams.get('proofTargetId'));
+    const proofTargetLabelParam = urlParams.get('proofTargetLabel');
+    if (!Number.isNaN(centerXParam) && !Number.isNaN(centerYParam)) {
+      pendingCenter = { x: centerXParam, y: centerYParam };
+    }
+    if (typeof panParam === 'string') {
+      const v = panParam.toLowerCase();
+      allowPanning = !(v === '0' || v === 'false' || v === 'off' || v === 'no');
+      updatePanningCursor();
+    }
+    if (!Number.isNaN(startIdParam)) {
+      pendingStartId = startIdParam;
+    }
+    if (typeof startLabelParam === 'string' && startLabelParam.trim().length > 0) {
+      pendingStartLabel = startLabelParam;
+    }
+    if (!Number.isNaN(blackIdParam)) {
+      pendingBlackStartId = blackIdParam;
+    }
+    if (!Number.isNaN(greenIdParam)) {
+      pendingGreenStartId = greenIdParam;
+    }
+    if (typeof blackLabelParam === 'string' && blackLabelParam.trim().length > 0) {
+      pendingBlackStartLabel = blackLabelParam;
+    }
+    if (typeof greenLabelParam === 'string' && greenLabelParam.trim().length > 0) {
+      pendingGreenStartLabel = greenLabelParam;
+    }
+    if (!Number.isNaN(proofTargetIdParam)) {
+      pendingProofTargetId = proofTargetIdParam;
+    }
+    if (typeof proofTargetLabelParam === 'string' && proofTargetLabelParam.trim().length > 0) {
+      pendingProofTargetLabel = proofTargetLabelParam;
+    }
+    
+    if (configParam) {
+      try {
+        const config = JSON.parse(atob(configParam));
+        initializeViewer(config);
+        if (modeParam) setMode(modeParam);
+        if (modeParam === 'coupled' && (pendingBlackStartId || pendingGreenStartId || pendingBlackStartLabel || pendingGreenStartLabel)) {
+          applyCoupledStart();
+        }
+        // Apply start after mode
+        if (!Number.isNaN(startIdParam)) {
+          applyStartStateById(startIdParam);
+        } else if (typeof startLabelParam === 'string' && startLabelParam.trim().length > 0) {
+          const st = markov.states.find(s => (s.label || '').trim() === startLabelParam.trim());
+          if (st) applyStartStateById(st.id);
+        }
+        // Capture initial start for reset once we have a token/start
+        initialStartId = markov.tokenStateId || (markov.states[0] ? markov.states[0].id : null);
+      } catch (e) {
+        console.error('Invalid config in URL:', e);
+        initializeViewer(DEFAULT_CONFIG);
+      }
+    } else {
+      initializeViewer(DEFAULT_CONFIG);
+      if (modeParam) setMode(modeParam);
+      if (modeParam === 'coupled' && (pendingBlackStartId || pendingGreenStartId || pendingBlackStartLabel || pendingGreenStartLabel)) {
+        applyCoupledStart();
+      }
+      // Apply start after mode
+      if (!Number.isNaN(startIdParam)) {
+        applyStartStateById(startIdParam);
+      } else if (typeof startLabelParam === 'string' && startLabelParam.trim().length > 0) {
+        const st = markov.states.find(s => (s.label || '').trim() === startLabelParam.trim());
+        if (st) applyStartStateById(st.id);
+      }
+      initialStartId = markov.tokenStateId || (markov.states[0] ? markov.states[0].id : null);
+    }
+
+    // Refit on resize
+    window.addEventListener('resize', () => {
+      fitContentToViewport();
+    });
+
+    // Expose API
+    window.markovViewer = {
+      loadConfig: initializeViewer,
+      markov: markov
+    };
+  </script>
+</body>
+</html>
