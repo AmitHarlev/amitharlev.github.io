@@ -76,12 +76,12 @@
 <p>Our observations of the above simulations would suggest that we should not expect the Markov cafe to remain packed all day just because it started the day full, and that in fact, the distribution of customers will converge to some unique limit regardless of the initial number of customers (though it will take much longer to converge in a cafe with capacity 200 compared to a cafe with capacity 5).</p>
 <p>When can we expect this nice behavior more generally? In this post we will provide a complete answer to this question. In particular, we answer:</p>
 <ul>
-<li>For which Markov chains does a unqiue limiting <strong>ensemble-average</strong> distribution exist (that is, one that doesn't depend on the starting state)?</li>
-<li>For which Markov chains does a unqiue limiting <strong>time-average</strong> distribution exist? (Here, unique also means it shouldn't depend on the sample path.)</li>
+<li>For which Markov chains does a unique limiting <strong>ensemble-average</strong> distribution exist (that is, one that doesn't depend on the starting state)?</li>
+<li>For which Markov chains does a unique limiting <strong>time-average</strong> distribution exist? (Here, unique also means it shouldn't depend on the sample path.)</li>
 <li>When will these two limiting distributions be the same?</li>
 </ul>
 <p>To keep things simple, we'll restrict ourselves to finite Markov chains throughout.</p>
-<h2>Part 2: When does a unqiue limiting ensemble-average distribution exist?</h2>
+<h2>Part 2: When does a unique limiting ensemble-average distribution exist?</h2>
 <p>To answer this question, we will:</p>
 <ol>
 <li>Look for counterexamples: Markov chains where either a limiting ensemble-average distribution does not exist, or where it exists but is not unique.</li>
@@ -101,7 +101,7 @@
   </div>
 </div>
 <p><br><br><br><br><br><br><br><br><br></p>
-<p>Now that you've explored a bit, let's talk about it. It turns out that there are actually only two things that can prevent a unqiue limiting ensemble-average distribution from existing in a finite Markov chain:</p>
+<p>Now that you've explored a bit, let's talk about it. It turns out that there are actually only two things that can prevent a unique limiting ensemble-average distribution from existing in a finite Markov chain:</p>
 <ol>
 <li><strong>Multiple trapping regions:</strong> The Markov chain has multiple subsets of the state space where it can &quot;get trapped&quot;. Depending on the starting state, it may end up trapped in different subsets, so the limiting distribution isn't unique.</li>
 <li><strong>Infinite cycling:</strong> The Markov chain cycles endlessly between a handful of different distributions, so there is no limiting distribution.</li>
@@ -167,7 +167,7 @@
   </div>
 </div>
 <hr>
-<p>We have seen two different properties of a finite Markov chain that can prevent a unqiue limiting ensemble-average distribution from existing: periodicity and multiple recurrent classes. In the next section, we will show that these are the only obstacles to convergence.</p>
+<p>We have seen two different properties of a finite Markov chain that can prevent a unique limiting ensemble-average distribution from existing: periodicity and multiple recurrent classes. In the next section, we will show that these are the only obstacles to convergence.</p>
 <h3>Proving convergence for finite, aperiodic Markov chains with a single recurrent class (ensemble-average)</h3>
 <p>We will now prove that if a finite Markov chain is aperiodic and has only one recurrent class, then its ensemble-average distribution converges to a unique limit. This will confirm that periodicity and multiple recurrent classes are indeed the only barriers to convergence for finite Markov chains.</p>
 <p>One thing you may have noticed from exploring the above simulations is that, when a limiting distribution does exist, it is always &quot;stable&quot; in the sense that advancing the Markov chain by one more step does not change the distribution. Intuitively this makes sense: if the distribution changed after one more step, then it couldn't be the limiting distribution, which results from taking infinitely many steps. Distributions with this property are known as <em>stationary</em> distributions. Formally, a distribution $\mathbf x$ is stationary if $\mathbf x = \mathbf x P$, where $P$ is the Markov chain's transition matrix.</p>
@@ -265,7 +265,7 @@ $$ which completes the proof of Theorem 1.</p>
 <p>Thus, if $X_n = i$ and ${\color[rgb]{0.215,0.698,0.302}Y_n} = j$, the probability that they are at the same state after $N$ steps is, $$\mathbf P[X_{n+N} = Y_{n + N}] = \sum_{k} P^N_{ik} \cdot P^N_{jk} &gt; 0,$$ where the positivity comes from the fact that $P^N_{ik}$ and $P^N_{jk}$ must be positive for all states $i$, $j$, and $k$. Since there are only finitely many pairs of states in the recurrent class, this means that, regardless of where they start, $X_n$ and ${\color[rgb]{0.215,0.698,0.302}Y_n}$ will meet with at least probability, $$<br>
 p_\text{meet} = \min_{(i,j)} \sum_{k} P^N_{ik} \cdot P^N_{jk} &gt; 0,<br>
 $$ after $N$ steps. Thus, the probability of them eventually meeting is at least as great as the probability of eventually getting a heads when repeatedly flipping a coin with heads probability $p_\text{meet} &gt; 0$, which is 1.</p>
-<h2>Part 3: When does a unqiue limiting time-average distribution exist?</h2>
+<h2>Part 3: When does a unique limiting time-average distribution exist?</h2>
 <p>The structure of this section is identical to the previous one. We will first consider counterexamples where no unique limiting time-average distribution exists, and then show these counterexamples are exhaustive.</p>
 <h3>Properties preventing existance or uniqueness (time-average)</h3>
 <p>Limiting time-average distributions are a bit simpler than limiting ensemble-average distributions. For ensemble-averages there were two problematic properties:</p>
