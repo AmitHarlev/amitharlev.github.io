@@ -39,48 +39,75 @@
 
   
 
-  <p>Welcome to the grand opening of the Markov cafe! You arrive right as they open, but somehow you're already the 200th person in line. Fortunately, the cafe has capacity for exactly 200 customers, so you're spared from waiting outside in the 110° heat. People continue arriving every couple minutes, but upon realizing that they must wait outside in the heat, they promptly decide iced coffee isn't worth it and leave. Finally, the line starts to move forward, but you notice that new people arrive roughly at the same rate as those at the front of the line are served. More precisely, you observe that:</p>
+  <blockquote>
+<p><em>Foreword:</em>
+This post was written for <a href="https://some.3b1b.co/">SoME4</a>. The goal of this post is to present some standard Markov chain concepts, but make them genuinely intuitive through interactive visualizations that let you explore the ideas hands-on. This post is written for undergraduates who have some probability background. You'll get the most out of this if you're familiar with basic Markov chain concepts (states, transition matrices, etc), but even if you're not, the interactive elements should help fill in gaps, and a quick Google search or ChatGPT query can clarify anything unfamiliar. One important note: please read this on a computer or laptop since some of the animations won't work properly on mobile devices.</p>
+</blockquote>
+<p>At the start of the 20th century it was commonly believed that the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law">strong law of large numbers</a> <em>only</em> applied to systems with independent events (think repeatedly flipping a coin or rolling a die). However, Russian mathematician Andrey Markov believed that even in systems where events influence each other, the system would converge to predictable averages over time, so long as the system satisfied certain criteria.<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
+<p>For those unfamiliar with the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law">strong law of large numbers</a> (SLLN), here is a simple example of what it tells us: if you flip a fair coin repeatedly, the fraction of flips that land on heads will eventually converge to $1/2$, the probability of getting heads for an arbitrary flip. It relates the <em>limiting fraction of times</em> an event occurs to the probability of it happening for an arbitrary independent trial. Pretty intuitive, right?</p>
+<p>Now consider the following somewhat strange variation: the first time you flip the coin there is a 100% chance of heads and a 0% chance of tails. For every flip thereafter, there is a 90% chance that the coin lands on the same face as the previous flip. This coin-flipping process is represented by the Markov chain below: the black dot starts at heads and each time you advance the chain by pressing the arrow button, there is a 90% chance the dot stays in the same state and a 10% chance it switches states.</p>
+<div class="markov-embed-outer">
+  <div class="markov-embed-wrapper">
+    <iframe src="./viewer.html" class="markov-embed-frame" id="coin-flip-single"></iframe>
+  </div>
+</div>
+<p>Since each coin flip now depends on the previous one, the SLLN does not apply. However, Markov believed that, even without independence, some analogue of the SLLN should still hold: that is, the fraction of times each event occurs will eventually converge to a predictable quantity. Is this true for the above Markov chain? Observe how the fraction of heads and tails evolves as the above chain advances (this is the percentage shown under each state). Do they seem like they are converging to something? If so, do you think they will <em>always</em> converge to these quantities, regardless of how many times the Markov chain is restarted?</p>
+<h3>An independence-free law of large numbers</h3>
+<p>Markov eventually succeeded and proved what is now sometimes referred to as the <em>Fundamental Theorem of Markov Chains</em> (FTMC). When using the SLLN, we had the fraction of heads converge to the probability of heads for an <em>arbitrary coin flip</em>. However, there is no longer a clear definition for an arbitrary coin flip: the heads probability can change between flips. To resolve this, we will instead consider the heads probability of a <em>coin flip very far in the future</em>. To measure this, we can imagine doing the following:</p>
+<ol>
+<li>Flip the coin a large number of times, say 1000 (i.e. advance the above Markov chain 999 steps).</li>
+<li>Record whether the 1000th flip is heads or tails.</li>
+<li>Restart and repeat a large number of times.</li>
+</ol>
+<p>The result of this process is the distribution of the 1000th coin flip. We call such a distribution an <em>ensemble-average distribution</em> since it is an average over many sample paths (many runs of the Markov chain). This is distinct from a <em>time-average distribution</em> which is the the fraction of times an event occurs over <em>a single sample path</em> (a single run of the Markov chain). If we wanted to instead measure the time-average distribution up to the 1000th coin flip (for a single sample path), we would do the following:</p>
+<ol>
+<li>Flip the coin 1000 times.</li>
+<li>Record the number of heads and tails for each of the 1000 flips.</li>
+<li>Stop.</li>
+</ol>
+<p>The FTMC tells us that the time-average distribution of the first $n$ coin flips will converge to the ensemble-average distribution of the $n$-th coin flip as $n$ gets larger and larger. If each coin flip was independent, then the ensemble-average distribution of the $n$-th coin flip is identical to that of an arbitrary flip, and we get back the SLLN. Thus, the FTMC can be viewed as a generalization of the SLLN to certain settings where the events are not independent.</p>
+<p>To see this in action, we can simulate the ensemble-average distribution after each flip. The Markov chain below is identical to the previous one, except that now the percentages show the ensemble-average distribution after $n$ flips (whereas they showed the time-average distribution in the previous one). In this case, the small black dots are only a visual aid to remind us that the ensemble-average distribution comes from averaging over many sample paths, and to help us better understand how the distribution evolves over time.</p>
+<div class="markov-embed-outer">
+  <div class="markov-embed-wrapper">
+    <iframe src="./viewer.html" class="markov-embed-frame" id="coin-flip-distribution"></iframe>
+  </div>
+</div>
+<p>Does it seem like the ensemble-average distribution in this simulation and the time-average distribution in the previous simulation are converging? In this case, the answer should be yes (if it doesn't look like it, let them both run for longer). Systems where time and ensemble-average distributions converge are called <em>ergodic</em>.<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup> This is a desirable property since it means that we can learn the statistical properties of a system by observing any single (long) trajectory, rather than needing to find a way to restart the system over and over, which can be hard or impossible in the real world.</p>
+<p>In this post, we will see that a Markov chain is ergodic if:</p>
+<ol>
+<li>a unique limiting ensemble-average distribution exists, and</li>
+<li>a unique limiting time-average distribution exists.</li>
+</ol>
+<p>Here, by unique, we mean that the limiting distribution does not depend on the initial state, nor on the particular sample path. However, it is not obvious by looking at a Markov chain whether either of these conditions holds. This is where the FTMC comes in. The FTMC provides us two structural properties and tells us that if the Markov chain satisfies both these properties, then both the above conditions hold and the Markov chain is ergodic.</p>
+<p>The purpose of the remainder of this post is to understand what these two properties are and why they are sufficient for the Markov chain to be ergodic. In particular, we will explore the following questions:</p>
+<ul>
+<li>For which Markov chains does a unique limiting <strong>ensemble-average</strong> distribution exist?</li>
+<li>For which Markov chains does a unique limiting <strong>time-average</strong> distribution exist?</li>
+<li>If both distributions exist, why must they be the same?</li>
+</ul>
+<p>To keep things simple, we will restrict ourselves to considering finite Markov chains.</p>
+<h3>One more example of an ergodic Markov chain</h3>
+<p>Before jumping into answering these questions, let's look at one more, slightly more complicated Markov chain. While this example won't necessarily teach us anything new, it can be helpful to see more than one example, especially if the first example is very simple (e.g. a two state Markov chain).</p>
+<p>For this example, imagine the following scenario. There is a tiny cafe and we are trying to model the number of people waiting in line. At this cafe:</p>
 <ul>
 <li>Each minute, the customer at the front of the line has a 50% chance of being served and leaving.</li>
 <li>Each minute, there's a 50% chance that a new customer arrives at the cafe.</li>
 <li>New customers wait until the end of the minute and then join the line if there's space; otherwise, they leave.</li>
 </ul>
-<p>Since arrival and departure rates are roughly equal, you wonder whether this means that the store will remain packed all day. Fortunately, this is exactly the kind of question we can answer with Markov chains! We break this problem into two key parts:</p>
-<ol>
-<li><strong>Does the system reach equilibrium?</strong> Will the distribution of customers reach an equilibrium over time, and if so, does this equilibrium depend on the initial number of customers?</li>
-<li><strong>How long does it take?</strong> If an equilibrium distribution exists, how long until the distribution of customers in the cafe actually approaches it?</li>
-</ol>
-<p>This post tackles the first question; the second may be the subject of a future post.</p>
-<h2>Part 1: What limiting distribution are we talking about?</h2>
-<p>There's more than one way to interpret the equilibrium question above, and this ambiguity is closely tied to a fundamental idea in Markov chain theory. We need to distinguish between two different types of limiting distributions:</p>
-<ol>
-<li><strong>Long-run time-average distribution</strong>: Does the fraction of time that there are exactly $m$ customers in the cafe converge as we observe for longer and longer periods (for each $m$)?</li>
-<li><strong>Long-run ensemble-average distribution</strong>: Does the probability that there are exactly $m$ customers in the cafe at time $n$ converge as $n \to \infty$ (for each $m$)?</li>
-</ol>
-<p>To understand the difference, consider the following two approaches. For the time average, imagine an observer who watches the cafe for a very long time and tracks the fraction of time there were exactly <em>m</em> customers present. For the ensemble average, imagine simulating many copies of the cafe, each starting with the same initial number of customers, and then letting the simulations run for a long time before stopping all of them simultaneously and checking what fraction of them currently have exactly <em>m</em> customers.</p>
-<p>Let's explore each of these concepts by playing with a concrete example. To keep things simple, consider a version of the cafe with capacity for only 5 customers. The Markov chain below represents this system, where each blue circle represents a state (number of customers) and the arrows show possible transitions with their probabilities. The black dot indicates the current state of the system.</p>
-<p>Try stepping through the chain using the arrow button, or press play to watch it evolve automatically. The percentage below each state tracks the fraction of time the chain has spent there. This is the time-average distribution! As you let the simulation run, you'll see these percentages stabilize (<em>slowly</em>), demonstrating convergence to some limiting time-average distribution. Reset the chain and click on a state to change the system's starting state. Does it seem like the limiting distribution depends on the start state?</p>
+<p>Since this cafe is <em>tiny</em>, there is only space for 5 customers in the line. We can model this with the following Markov chain.</p>
 <div class="markov-embed-outer">
   <div class="markov-embed-wrapper">
     <iframe src="./viewer.html" class="markov-embed-frame" id="coffee-shop-single"></iframe>
   </div>
 </div>
-<p>Now let's explore the ensemble-average distribution. We are considering the same Markov chain, but instead of following a single trajectory over time, we are asking a different question: if we start in a particular state, what is the probability of being at each state exactly $n$ steps later? As we increase $n$, we can watch how this probability distribution evolves.</p>
-<p>Now, the percentages represent the probability of being at each state after $n$ steps, and the small black dots are only a visual aid to help better understand how the distribution evolves over time. Once again, if you let this run, it'll converge to some limiting ensemble-average distribution. Does the limiting distribution depend on the start state?</p>
+<p>In this case we are assuming that the cafe is initially full (5 customers). If you let this run for long enough, you will see the time-average distribution (<em>very slowly</em>) converge. Will the time-average distribution converge to the same thing if the cafe is initially empty? You can test this out by pressing on state &quot;0&quot; after resetting the chain and then letting it run again.</p>
+<p>Like in the coin flip example, we can also simulate the ensemble-average distribution.</p>
 <div class="markov-embed-outer">
   <div class="markov-embed-wrapper">
     <iframe src="./viewer.html" class="markov-embed-frame" id="coffee-shop-distribution"></iframe>
   </div>
 </div>
-<p>In the first simulation, the time average is over a <em>single sample path</em>, while in the second, the ensemble average is over the <em>entire probability distribution</em>. These two notions are fundamentally different and may not be equal. However, if you ran both simulations until they converged (which, admittedly, can take a while for the first one), you may have noticed that, in this example, the limiting time-average and ensemble-average distributions are the same and don't depend on the starting state. Systems where this is true are called <em>ergodic</em>.<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup> This is a desirable property since it means that we can learn the statistical properties of a system by observing any single (long) trajectory.</p>
-<p>Our observations from the above simulations would suggest that we should not expect the Markov cafe to remain packed all day just because it started the day full, and that in fact, the distribution of customers will converge to some unique limit regardless of the initial number of customers (though it will take much longer to converge in a cafe with capacity 200 compared to a cafe with capacity 5).</p>
-<p>When can we expect this nice behavior more generally? In this post we will provide a complete answer to this question. In particular, we answer:</p>
-<ul>
-<li>For which Markov chains does a unique limiting <strong>ensemble-average</strong> distribution exist (that is, one that doesn't depend on the starting state)?</li>
-<li>For which Markov chains does a unique limiting <strong>time-average</strong> distribution exist? (Here, unique also means it shouldn't depend on the sample path.)</li>
-<li>When will these two limiting distributions be the same?</li>
-</ul>
-<p>To keep things simple, we'll restrict ourselves to finite Markov chains throughout.</p>
+<p>You can experiment with how the ensemble-average distribution changes as you change the initial state. You should observe that both the time and ensemble-average distributions for this chain do not depend on the initial state, and that the distributions are eventually roughly the same.</p>
 <h2>Part 2: When does a unique limiting ensemble-average distribution exist?</h2>
 <p>To answer this question, we will:</p>
 <ol>
@@ -111,8 +138,9 @@
 <p>To fully explain what a recurrent class is, we need a little more terminology:</p>
 <ul>
 <li>We say that two states of a Markov chain, say $i$ and $j$, <em>communicate</em> if it is possible for the chain to eventually reach state $i$ starting at state $j$ and vice-versa.</li>
-<li>A <em>communicating class</em> is a set of states that all communicate with each other, where you can't add any more states to the set without breaking this property.</li>
+<li>A <em>communicating class</em> is a set of states that all communicate with each other, and where every other state in the Markov chain doesn't communicate with any of them.</li>
 </ul>
+<p>you can't add any more states to the set without breaking this property.</p>
 <p>We separate communicating classes into two types:</p>
 <ol>
 <li>A <em>transient class</em> is a communicating class that the Markov chain can (and will) eventually leave forever.</li>
@@ -120,14 +148,14 @@
 </ol>
 <p>Don't worry if these definitions are a little confusing right now, the best way to understand these ideas is through examples! In each of the following examples, the Markov chain has multiple recurrent classes. Observe the effect this has: even though limiting ensemble-average distributions exist, they depend on the starting state.</p>
 <hr>
-<p><strong>Example 1:</strong> In this example, the Markov chain has two recurrent classes: $\{\text{R1-1}\}$ and $\{\text{R2-1}\}$. The states R1-1 and R2-1 don't communicate with each other, and if the Markov chain is at one of these states, it stays there forever.</p>
+<p><strong>Example 1:</strong> In this example, the Markov chain has two recurrent classes: $\{\text{R1}\}$ and $\{\text{R2}\}$. The states R1 and R2 don't communicate with each other, and if the Markov chain is at one of these states, it stays there forever.</p>
 <div class="markov-embed-outer">
   <div class="markov-embed-wrapper">
     <iframe src="./viewer.html" class="markov-embed-frame" id="mult-rec-class-1"></iframe>
   </div>
 </div>
 <hr>
-<p><strong>Example 2:</strong> This is similar to the above example, but the Markov chain now also has a transient class: $\{\text{T1-1}\}$. T1-1 doesn't communicate with either of R1-1 or R2-1 since, while the chain can go from T1-1 to either state, it cannot go back: once the Markov chain leaves T1-1, it never returns. To see that the limiting ensemble-average distribution depends on the starting state, click on one of R1-1 or R2-1 to set a different starting state.</p>
+<p><strong>Example 2:</strong> This is similar to the above example, but the Markov chain now also has a transient class, $\{\text{T1}\}$. T1 doesn't communicate with either of R1 or R2 since, while the chain can go from T1 to either state, it cannot go back: once the Markov chain leaves T1, it never returns. To see that the limiting ensemble-average distribution depends on the starting state, click on one of R1 or R2 to set a different starting state.</p>
 <div class="markov-embed-outer">
   <div class="markov-embed-wrapper">
     <iframe src="./viewer.html" class="markov-embed-frame-medium" id="mult-rec-class-2"></iframe>
@@ -142,11 +170,12 @@
 </div>
 <hr>
 <h4>Periodic Markov chains</h4>
-<p>We say that a recurrent class is <em>aperiodic</em> if there exists some $N \geq 0$ such that $$\mathbf P[X_N = j ~|~ X_0 = i] &gt; 0$$ for every pair of states $i$ and $j$ in the recurrent class. Intuitively, this means that the chain doesn't get trapped in rigid cycles: after $N$ steps, you have at least some probability of being at any state in the recurrent class, regardless of where in the recurrent class you started. We say that a recurrent class is <em>periodic</em> if it is not aperiodic.</p>
+<p>Throughout this post, we're going to use notation like $\left(X_n\right)_{n \geq 0}$ to represent Markov chains. That is $X_0$ represents the starting state of the Markov chain, $X_1$ is the state after 1 step, and so on for all $n \geq 0$. We mention this here since we're about to need it :).</p>
+<p>We'll say that a recurrent class of a Markov chain is <em>aperiodic</em> if there exists some $N \geq 0$ such that $$\mathbf P[X_N = j ~|~ X_0 = i] &gt; 0$$ for every pair of states $i$ and $j$ in the recurrent class. Intuitively, this means that the chain doesn't get trapped in rigid cycles: after $N$ steps, you have at least some probability of being at any state in the recurrent class, regardless of where in the recurrent class you started. We say that a recurrent class is <em>periodic</em> if it is not aperiodic.</p>
 <p>We say a Markov chain is periodic if <em>any</em> of its recurrent classes are periodic, and we say it is aperiodic otherwise.</p>
 <p>Here are some examples of periodic Markov chains. Notice how, in each of these examples, a limiting ensemble-average distribution does not exist.</p>
 <hr>
-<p><strong>Example 1</strong>: This chain has a single recurrent class that is periodic.</p>
+<p><strong>Example 1:</strong> This chain has a single recurrent class that is periodic: after an even number of steps, the chain will always be at R1-1, and after an odd number of steps, the chain will always be at R1-2.</p>
 <div class="markov-embed-outer">
   <div class="markov-embed-wrapper">
     <iframe src="./viewer.html" class="markov-embed-frame" id="periodic-1"></iframe>
@@ -170,7 +199,7 @@
 <p>We have seen two different properties of a finite Markov chain that can prevent a unique limiting ensemble-average distribution from existing: periodicity and multiple recurrent classes. In the next section, we will show that these are the only obstacles to convergence.</p>
 <h3>Proving convergence for finite, aperiodic Markov chains with a single recurrent class (ensemble-average)</h3>
 <p>We will now prove that if a finite Markov chain is aperiodic and has only one recurrent class, then its ensemble-average distribution converges to a unique limit. This will confirm that periodicity and multiple recurrent classes are indeed the only barriers to convergence for finite Markov chains.</p>
-<p>One thing you may have noticed from exploring the above simulations is that, when a limiting distribution does exist, it is always &quot;stable&quot; in the sense that advancing the Markov chain by one more step does not change the distribution. Intuitively this makes sense: if the distribution changed after one more step, then it couldn't be the limiting distribution, which results from taking infinitely many steps. Distributions with this property are known as <em>stationary</em> distributions. Formally, a distribution $\mathbf x$ is stationary if $\mathbf x = \mathbf x P$, where $P$ is the Markov chain's transition matrix.</p>
+<p>One thing you may have noticed from exploring the above simulations is that, when a limiting distribution does exist, it is always &quot;stable&quot; in the sense that advancing the Markov chain by one more step does not change the distribution. Intuitively this makes sense: if the distribution changed after one more step, then it couldn't be the limiting distribution, which results from taking infinitely many steps. Distributions with this property are known as <em>stationary</em> distributions. Formally, a distribution $\mathbf x$ is stationary if $\mathbf x = \mathbf x P$, where $P$ is the Markov chain's <a href="https://en.wikipedia.org/wiki/Stochastic_matrix">transition matrix</a>.</p>
  <div class="theorem">
     <div class="theorem-title">Lemma 1</div>
     <div class="theorem-body">
@@ -187,7 +216,7 @@
         <i>Let $\left(X_n\right)_{n \geq 0}$ be a finite, aperiodic Markov chain with a single recurrent class and arbitrary initial distribution. Suppose that this Markov chain has a stationary distribution $\pi$. Then, $$\mathbf P[X_n = j] \to \pi(j) \quad \text{as $n \to \infty$ for all states $j$}.$$ That is, the Markov chain's ensemble-average distribution will converge to the stationary distribution independent of the initial distribution. </i>
     </div>
 </div>
-<p>The key step is to cleverly construct multiple copies of the same Markov chain that depend on each other in a useful way.<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup></p>
+<p>The key step is to cleverly construct multiple copies of the same Markov chain that depend on each other in a useful way.<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup></p>
 <p>Start with two independent copies of the Markov chain:</p>
 <ul>
 <li>$\left(X_n\right)_{n\geq 0}$ with arbitrary initial distribution.</li>
@@ -209,17 +238,17 @@ $$ The simulation below illustrates this construction. The black dot represents 
 <p>First, <em>if</em> we know that $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ meet eventually, then $\color[rgb]{1,0.5725,0.1686}Z_n$'s distribution will converge to the stationary distribution. This is because for large $n$, it becomes increasingly likely that $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ have already met, which would mean that $\color[rgb]{1,0.5725,0.1686}Z_n$ is at the same state as $\color[rgb]{0.215,0.698,0.302}Y_n$ (which has the stationary distribution).</p>
 <p>More rigorously, <em>if</em> $\mathbf P[n &lt; T] \to 0$, then $$
 \mathbf P[{\color[rgb]{1,0.5725,0.1686}Z_n} = j] = \mathbf P[{\color[rgb]{0.215,0.698,0.302}Y_n} = j \text{ and } n \geq T] + \mathbf P[X_n = j \text{ and } n &lt; T] \sim \mathbf P[{\color[rgb]{0.215,0.698,0.302}Y_n} = j] = \pi(j).
-$$ (If you are unfamiliar with the $\sim$ notation, it means the expressions converge as $n \to \infty$.<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>)</p>
+$$ (If you are unfamiliar with the $\sim$ notation, it means the expressions converge as $n \to \infty$.<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup>)</p>
 <p>It can be tempting to say that in a finite Markov chain, it's obvious that $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ meet <em>eventually</em>, but this is not always true. Let's see what can go wrong by revisiting our earlier examples of chains where the ensemble-average distribution does not converge.</p>
 <hr>
-<p><strong>Example 1</strong>: If the chain is periodic, the $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ may cycle forever without meeting. In this example, $\mathbf P[n &lt; T] = 1$ for all $n \geq 0$ if $X_0 \neq {\color[rgb]{0.215,0.698,0.302}Y_0}$.</p>
+<p><strong>Example 1:</strong> If the chain is periodic, the $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ may cycle forever without meeting. In this example, $\mathbf P[n &lt; T] = 1$ for all $n \geq 0$ if $X_0 \neq {\color[rgb]{0.215,0.698,0.302}Y_0}$.</p>
 <div class="markov-embed-outer">
   <div class="markov-embed-wrapper">
     <iframe src="./viewer.html" class="markov-embed-frame" id="periodic-coupled-1"></iframe>
   </div>
 </div>
 <hr>
-<p><strong>Example 2</strong>: If the chain has multiple recurrent classes, then $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ may end up in different recurrent classes and never meet. In this example, $\mathbf P[n &lt; T] = 0.5$ for all $n \geq 1$.
+<p><strong>Example 2:</strong> If the chain has multiple recurrent classes, then $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ may end up in different recurrent classes and never meet. In this example, $\mathbf P[n &lt; T] = 0.5$ for all $n \geq 1$.
 (Note that since $\mathbf P[n &lt; T] &gt; 0$, the two chains do <em>sometimes</em> meet, so you may need to reset a couple times to see an example where they don't).</p>
 <div class="markov-embed-outer">
   <div class="markov-embed-wrapper">
@@ -241,7 +270,7 @@ $$ (If you are unfamiliar with the $\sim$ notation, it means the expressions con
 <p>For completeness, we'll prove this rigorously later (Lemma 2), but we'll take this for granted for now.</p>
 <p>So to summarize, so far we've shown that $\color[rgb]{1,0.5725,0.1686}Z_n$'s ensemble-average distribution will converge to $\pi$, the stationary distribution. How does this help us prove the same thing for $X_n$?</p>
 <p>The key observation is that $X_n$ and $\color[rgb]{1,0.5725,0.1686}Z_n$ have identical distributions at every time step, <em>even after $\color[rgb]{1,0.5725,0.1686}Z_n$ starts following $\color[rgb]{0.215,0.698,0.302}Y_n$</em>. This is because they are both copies of the same Markov chain starting from the same initial distribution (since $\color[rgb]{1,0.5725,0.1686}Z_n$ initially follows $X_n$).</p>
-<p>Many people find this intially confusing: $\color[rgb]{1,0.5725,0.1686}Z_n$ eventually follows $\color[rgb]{0.215,0.698,0.302}Y_n$, so how can it still be distributed like $X_n$? What's important to remember is that the distribution of $\color[rgb]{1,0.5725,0.1686}Z_n$ depends only on the transition probabilities between states (and the distribution of $\color[rgb]{1,0.5725,0.1686}Z_0$), not on where it goes for any individual sample path. Since $X_n$ and $\color[rgb]{1,0.5725,0.1686}Z_n$ start at the same place, and then move according to the same transition probabilities <em>even after $\color[rgb]{1,0.5725,0.1686}Z_n$ starts following $\color[rgb]{0.215,0.698,0.302}Y_n$</em>, their distributions will be the same. Here is one last simulation of the coupled system that tries to make this visually clear. It initially shows only a single sample path, but it switches to showing how the probability distributions of $X_n$, $\color[rgb]{0.215,0.698,0.302}Y_n$, and $\color[rgb]{1,0.5725,0.1686}Z_n$ evolve after the first time they meet.</p>
+<p>Many people find this initially confusing: $\color[rgb]{1,0.5725,0.1686}Z_n$ eventually follows $\color[rgb]{0.215,0.698,0.302}Y_n$, so how can it still be distributed like $X_n$? What's important to remember is that the distribution of $\color[rgb]{1,0.5725,0.1686}Z_n$ depends only on the transition probabilities between states (and the distribution of $\color[rgb]{1,0.5725,0.1686}Z_0$), not on where it goes for any individual sample path. Since $X_n$ and $\color[rgb]{1,0.5725,0.1686}Z_n$ start at the same place, and then move according to the same transition probabilities <em>even after $\color[rgb]{1,0.5725,0.1686}Z_n$ starts following $\color[rgb]{0.215,0.698,0.302}Y_n$</em>, their distributions will be the same. Here is one last simulation of the coupled system that tries to make this visually clear. It initially shows only a single sample path, but it switches to showing how the probability distributions of $X_n$, $\color[rgb]{0.215,0.698,0.302}Y_n$, and $\color[rgb]{1,0.5725,0.1686}Z_n$ evolve after the first time they meet.</p>
 <div class="markov-embed-outer">
   <div class="markov-embed-wrapper">
     <iframe src="./viewer.html" class="markov-embed-frame-large" id="coupling-3"></iframe>
@@ -261,17 +290,17 @@ $$ which completes the proof of Theorem 1.</p>
     </div>
 </div>
 <p>Since the chain is finite and has a single recurrent class, with probability $1$, $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ will eventually both be in the recurrent class. So for simplicity, let's just assume that they both start in the recurrent class.</p>
-<p>Since the chain is aperiodic, there is some $N \geq 0$ such that $P^N_{ij} &gt; 0$ for every pair of states $i$ and $j$ in the recurrent class.</p>
+<p>Since the chain is aperiodic, there is some $N \geq 0$ such that $P^N_{ij} &gt; 0$ for every pair of states $i$ and $j$ in the recurrent class (where $P^N_{ij}$ is the $ij$-th entry of the transition matrix raised to the $N$-th power).</p>
 <p>Thus, if $X_n = i$ and ${\color[rgb]{0.215,0.698,0.302}Y_n} = j$, the probability that they are at the same state after $N$ steps is, $$\mathbf P[X_{n+N} = Y_{n + N}] = \sum_{k} P^N_{ik} \cdot P^N_{jk} &gt; 0,$$ where the positivity comes from the fact that $P^N_{ik}$ and $P^N_{jk}$ must be positive for all states $i$, $j$, and $k$. Since there are only finitely many pairs of states in the recurrent class, this means that, regardless of where they start, $X_n$ and ${\color[rgb]{0.215,0.698,0.302}Y_n}$ will meet with at least probability, $$
 p_\text{meet} = \min_{(i,j)} \sum_{k} P^N_{ik} \cdot P^N_{jk} &gt; 0,
 $$ after $N$ steps. Thus, the probability of them eventually meeting is at least as great as the probability of eventually getting a heads when repeatedly flipping a coin with heads probability $p_\text{meet} &gt; 0$, which is 1.</p>
 <h2>Part 3: When does a unique limiting time-average distribution exist?</h2>
 <p>The structure of this section is identical to the previous one. We will first consider counterexamples where no unique limiting time-average distribution exists, and then show these counterexamples are exhaustive.</p>
-<h3>Properties preventing existance or uniqueness (time-average)</h3>
+<h3>Properties preventing existence or uniqueness (time-average)</h3>
 <p>Limiting time-average distributions are a bit simpler than limiting ensemble-average distributions. For ensemble-averages there were two problematic properties:</p>
 <ol>
-<li>Periodicity,</li>
-<li>Multiple recurrent classes.</li>
+<li>periodicity,</li>
+<li>multiple recurrent classes.</li>
 </ol>
 <p>On the other hand, only the latter is a problem for time-average distributions—they will converge even in a periodic Markov chain. This is most easily understood by considering two of our simplest counterexamples from earlier.</p>
 <hr>
@@ -300,7 +329,7 @@ $$ after $N$ steps. Thus, the probability of them eventually meeting is at least
 </ul>
 </li>
 </ul>
-<p>Why does this mean the time-average distribution converges? In the limit, the initial phase becomes negligible because it always has finite length. So the limiting fraction of time spent at each state will be determined entirely by the cycling phase. Since we have i.i.d. cycles, the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law">Strong Law of Large Numbers</a> tells us that the average behavior across cycles will converge to the expected behavior of a single cycle.</p>
+<p>Why does this mean the time-average distribution converges? In the limit, the initial phase becomes negligible because it always has finite length. So the limiting fraction of time spent at each state will be determined entirely by the cycling phase. Since we have i.i.d. cycles, the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law">strong law of large numbers</a> tells us that the average behavior across cycles will converge to the expected behavior of a single cycle.</p>
 <p>To make that last claim precise:</p>
 <p>Let $C^j$ be the length of an excursion starting and ending at state $j$, and let $V^j(i)$ be the number of visits to state $i$ during that excursion. (Here, the excursion begins after initially leaving state $j$ so as to not double count.) Let $\big(C^j_1, V^j_1(i)\big), \big(C^j_2, V^j_2(i)\big), \dots$ be i.i.d. copies of $\big(C^j, V^j(i)\big)$. By the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law">SLLN</a>, the following holds with probability $1$:
 $$\frac{V^j_1(i) + \cdots + V^j_k(i)}{k} \to \mathbf E[V^j(i)] \quad \text{and} \quad \frac{C^j_1 + \cdots + C^j_k}{k} \to \mathbf E[C^j].$$ However, we want the fraction of time spent at state $i$, which is: $$\frac{\text{total visits to $i$}}{\text{total time}} = \frac{V^j_1(i) + V^j_2(i) + V^j_3(i) + \cdots}{C^j_1 + C^j_2 + C^j_3 + \cdots}$$ Intuitively, since $C^j_1 + \cdots + C^j_k \approx k\mathbf E[C^j]$ for large $k$, we get: $$\frac{V^j_1(i) + \cdots + V^j_k(i)}{C^j_1 + \cdots + C^j_k} \approx \frac{V^j_1(i) + \cdots + V^j_k(i)}{k\mathbf E[C^j]} \to \frac{\mathbf E[V^j(i)]}{\mathbf E[C^j]}.$$ This final convergence is rigorously established by the <a href="https://en.wikipedia.org/wiki/Renewal_theory#Elementary_renewal_theorem_for_renewal_reward_processes">Renewal-Reward theorem</a>, which handles the ratio of two sums that each satisfy the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law">SLLN</a>, even when the corresponding terms in the two sums are dependent (as $C^j_k$ and $V^j_k(i)$ are here).</p>
@@ -337,7 +366,7 @@ $$\frac{V^j_1(i) + \cdots + V^j_k(i)}{k} \to \mathbf E[V^j(i)] \quad \text{and} 
   </div>
 </div>
 <p>Now, as $n$ gets large, the number of direct transitions from $i$ to $j$ will converge to exactly a $P_{ij}$ fraction of the number of visits to state $i$ (this can also be seen in the simulation!):
-$$T_n(i,j) \sim P_{ij} \cdot S_n(i).$$ (Recall that $\sim$ means that the expressions converge as $n \to \infty$.<sup class="footnote-ref"><a href="#fn3" id="fnref3:1">[3:1]</a></sup>)</p>
+$$T_n(i,j) \sim P_{ij} \cdot S_n(i).$$ (Recall that $\sim$ means that the expressions converge as $n \to \infty$.<sup class="footnote-ref"><a href="#fn4" id="fnref4:1">[4:1]</a></sup>)</p>
 <p>Thus, using the fact that $\mathbf x(j)$ is the limiting fraction of time at state $j$:
 $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \sum_i \frac{T_n(i,j)}{n} = \sum_i \lim_{n \to \infty} \frac{P_{ij} \cdot S_n(i)}{n} = \sum_i P_{ij} \mathbf x(i).$$</p>
 <p>Since this holds for any state $j$, we have $\mathbf x(j) = (\mathbf x P)_j$ for all $j$, which means $\mathbf x = \mathbf x P$.</p>
@@ -351,8 +380,8 @@ $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \su
 <li>The long-run time-average distribution converges to this stationary distribution. (Theorem 2)</li>
 <li>Thus, the limiting time-average and ensemble-average distributions are the same.</li>
 </ol>
+<p>These five facts together make up the Fundamental Theorem of Markov Chains. At the start of this post we said that the FTMC can be viewed as generalizing the SLLN to certain cases where there is no independence. We now know what those &quot;certain cases&quot; are: any finite, aperiodic Markov chain with a single recurrent class.<sup class="footnote-ref"><a href="#fn5" id="fnref5">[5]</a></sup></p>
 <p>We also understand all the reasons that one of these limits might either not exist or not be unique. This means that we can reason about what might go wrong in a periodic Markov chain, or a Markov chain with multiple recurrent classes. For example, we know that in a periodic Markov chain with a single recurrent class, the time-average distribution has a unique limit, but the ensemble-average distribution does not converge.</p>
-<p>Going back to the Markov Cafe, we now have a proof that the distribution of customers will converge over time, and that this limiting distribution is unaffected by the morning crowd. More importantly, we now have the tools to answer these types of questions for many other, more complicated stochastic systems!</p>
 <p>Thanks for sticking with me all the way to here! This is my first ever blog post, so I'd love to hear any feedback, suggestions, or requests.</p>
 <h4>Last note: terminology used in textbooks and papers</h4>
 <p>You will often see these results stated for either:</p>
@@ -360,7 +389,135 @@ $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \su
 <li><em>ergodic</em> Markov chains, or</li>
 <li><em>irreducible</em> and aperiodic Markov chains,</li>
 </ul>
-<p>rather than for aperiodic Markov chains with a single recurrent class, as we have stated them here. An irreducible Markov chain is one with a single recurrent class and no transient classes (so the entire state space is the single recurrent class), and an ergodic Markov chain is one that is irreducible and aperiodic. So such results are the same as the ones we've stated here, except that they also assume no transient classes (which make no real difference anyways).</p>
+<p>rather than for aperiodic Markov chains with a single recurrent class, as we have stated them here. An irreducible Markov chain is one with a single recurrent class and no transient classes (so the entire state space is the single recurrent class), and an ergodic Markov chain is defined as one that is irreducible and aperiodic. So such results are the same as the ones we've stated here, except that they also assume no transient classes (which make no real difference anyways).</p>
+<script type="application/json" id="coinFlipConfig">
+  {
+  "states": [
+    {
+      "id": 1,
+      "x": 535,
+      "y": 250,
+      "label": "Heads",
+      "color": {
+        "name": "Blue",
+        "fill": "#339af0",
+        "stroke": "#1c7ed6"
+      }
+    },
+    {
+      "id": 2,
+      "x": 660,
+      "y": 250,
+      "label": "Tails",
+      "color": {
+        "name": "Blue",
+        "fill": "#339af0",
+        "stroke": "#1c7ed6"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": 1754964986632,
+      "from": 1,
+      "to": 2,
+      "weight": "0.1",
+      "controlX": 592.5,
+      "controlY": 325
+    },
+    {
+      "id": 1754964989382,
+      "from": 2,
+      "to": 1,
+      "weight": "0.1",
+      "controlX": 592.5,
+      "controlY": 175
+    },
+    {
+      "id": 1755499323075,
+      "from": 1,
+      "to": 1,
+      "weight": "0.9",
+      "controlX": 370,
+      "controlY": 250
+    },
+    {
+      "id": 1755499327426,
+      "from": 2,
+      "to": 2,
+      "weight": "0.9",
+      "controlX": 825,
+      "controlY": 250
+    }
+  ]
+}
+</script>
+<script>
+(function() {
+  const iframe = document.getElementById('coin-flip-single');
+  function readInlineConfig() {
+    try {
+      const el = document.getElementById('coinFlipConfig');
+      const txt = (el && el.textContent) ? el.textContent.trim() : '';
+      if (!txt) {
+        console.warn('No inline config found in #coinFlipConfig.');
+        return null;
+      }
+      return JSON.parse(txt);
+    } catch (err) {
+      console.error('Failed to parse inline config JSON:', err);
+      return null;
+    }
+  }
+
+  function sendConfig() {
+    const cfg = readInlineConfig();
+    if (!cfg) return;
+    iframe.contentWindow.postMessage({ type: 'loadMarkovConfig', config: cfg, mode: "sample", startStateLabel: "Heads", allowPanning: false, centerX: 597.5, centerY: 300}, '*');
+  }
+
+  window.addEventListener('message', (event) => {
+    if (event && event.data && event.data.type === 'markovViewerReady') {
+      sendConfig();
+    }
+  });
+  iframe.addEventListener('load', sendConfig);
+
+})();
+</script>
+<script>
+(function() {
+  const iframe = document.getElementById('coin-flip-distribution');
+  function readInlineConfig() {
+    try {
+      const el = document.getElementById('coinFlipConfig');
+      const txt = (el && el.textContent) ? el.textContent.trim() : '';
+      if (!txt) {
+        console.warn('No inline config found in #coinFlipConfig.');
+        return null;
+      }
+      return JSON.parse(txt);
+    } catch (err) {
+      console.error('Failed to parse inline config JSON:', err);
+      return null;
+    }
+  }
+
+  function sendConfig() {
+    const cfg = readInlineConfig();
+    if (!cfg) return;
+    iframe.contentWindow.postMessage({ type: 'loadMarkovConfig', config: cfg, mode: "distribution", startStateLabel: "Heads", allowPanning: false, centerX: 597.5, centerY: 300}, '*');
+  }
+
+  window.addEventListener('message', (event) => {
+    if (event && event.data && event.data.type === 'markovViewerReady') {
+      sendConfig();
+    }
+  });
+  iframe.addEventListener('load', sendConfig);
+
+})();
+</script>
 <script type="application/json" id="markovConfig">
     
 {
@@ -754,23 +911,12 @@ $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \su
   const gameContainer = document.getElementById('gameContainer');
 
   function openModal() {
-    // Create iframe to load the game
-    const iframe = document.createElement('iframe');
-    iframe.src = './non-conv-game.html';
-    iframe.style.width = '100%';
-    iframe.style.height = '100%';
-    iframe.style.border = 'none';
-    iframe.style.borderRadius = '12px';
-    
-    // Clear any existing content and add the iframe
-    gameContainer.innerHTML = '';
-    gameContainer.appendChild(iframe);
-    
-    // Show the modal
-    gameModal.classList.remove('hidden');
-    
-    // Prevent body scroll when modal is open
-    document.body.style.overflow = 'hidden';
+    // Open the game in a new tab instead of a modal
+    const newWin = window.open('./non-conv-game.html', '_blank', 'noopener');
+    if (newWin) {
+      // Ensure no access to opener for security
+      newWin.opener = null;
+    }
   }
 
   function closeModal() {
@@ -817,7 +963,7 @@ $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \su
       "id": 1,
       "x": 535,
       "y": 250,
-      "label": "R1-1",
+      "label": "R1",
       "color": {
         "name": "Red",
         "fill": "#ff6b6b",
@@ -829,7 +975,7 @@ $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \su
       "id": 2,
       "x": 660,
       "y": 250,
-      "label": "R2-1",
+      "label": "R2",
       "color": {
         "name": "Orange",
         "fill": "#ff922b",
@@ -879,7 +1025,7 @@ $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \su
   function sendConfig() {
     const cfg = readInlineConfig();
     if (!cfg) return;
-    iframe.contentWindow.postMessage({ type: 'loadMarkovConfig', config: cfg, mode: "distribution", startStateLabel: "R2-1", allowPanning: false, centerX: 597.5, centerY: 275}, '*');
+    iframe.contentWindow.postMessage({ type: 'loadMarkovConfig', config: cfg, mode: "distribution", startStateLabel: "R2", allowPanning: false, centerX: 597.5, centerY: 275}, '*');
   }
 
   window.addEventListener('message', (event) => {
@@ -898,7 +1044,7 @@ $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \su
       "id": 1,
       "x": 250,
       "y": 150,
-      "label": "T1-1",
+      "label": "T1",
       "color": {
         "name": "Gray",
         "fill": "#868e96",
@@ -910,7 +1056,7 @@ $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \su
       "id": 2,
       "x": 150,
       "y": 300,
-      "label": "R1-1",
+      "label": "R1",
       "color": {
         "name": "Red",
         "fill": "#ff6b6b",
@@ -922,7 +1068,7 @@ $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \su
       "id": 3,
       "x": 350,
       "y": 300,
-      "label": "R2-1",
+      "label": "R2",
       "color": {
         "name": "Orange",
         "fill": "#ff922b",
@@ -988,7 +1134,7 @@ $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \su
   function sendConfig() {
     const cfg = readInlineConfig();
     if (!cfg) return;
-    iframe.contentWindow.postMessage({ type: 'loadMarkovConfig', config: cfg, mode: "distribution", startStateLabel: "T1-1", allowPanning: false, centerX: 250, centerY: 300}, '*');
+    iframe.contentWindow.postMessage({ type: 'loadMarkovConfig', config: cfg, mode: "distribution", startStateLabel: "T1", allowPanning: false, centerX: 250, centerY: 300}, '*');
   }
 
   window.addEventListener('message', (event) => {
@@ -1021,7 +1167,7 @@ $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \su
   function sendConfig() {
     const cfg = readInlineConfig();
     if (!cfg) return;
-    iframe.contentWindow.postMessage({ type: 'loadMarkovConfig', config: cfg, mode: "sample", startStateLabel: "T1-1", allowPanning: false, centerX: 250, centerY: 300}, '*');
+    iframe.contentWindow.postMessage({ type: 'loadMarkovConfig', config: cfg, mode: "sample", startStateLabel: "T1", allowPanning: false, centerX: 250, centerY: 300}, '*');
   }
 
   window.addEventListener('message', (event) => {
@@ -1054,7 +1200,7 @@ $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \su
   function sendConfig() {
     const cfg = readInlineConfig();
     if (!cfg) return;
-    iframe.contentWindow.postMessage({ type: 'loadMarkovConfig', config: cfg, mode: "coupled-sample", startBlackStateLabel: "T1-1", startGreenStateLabel: "R2-1", allowPanning: false, centerX: 250, centerY: 300}, '*');
+    iframe.contentWindow.postMessage({ type: 'loadMarkovConfig', config: cfg, mode: "coupled-sample", startBlackStateLabel: "T1", startGreenStateLabel: "R2", allowPanning: false, centerX: 250, centerY: 300}, '*');
   }
 
   window.addEventListener('message', (event) => {
@@ -2318,14 +2464,19 @@ $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \su
   iframe.addEventListener('load', sendConfig);
 
 })();
-</script><hr class="footnotes-sep">
+</script>
+<hr class="footnotes-sep">
 <section class="footnotes">
 <ol class="footnotes-list">
-<li id="fn1" class="footnote-item"><p>The topic of <em>ergodicity</em> extends well beyond Markov chains and stochastic processes. If you're interested in learning more, the <a href="https://en.wikipedia.org/wiki/Ergodicity">Wikipedia page</a> is a good place to start. <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+<li id="fn1" class="footnote-item"><p>If you'd like to learn more about this history, <a href="https://www.americanscientist.org/article/first-links-in-the-markov-chain">this article</a> is a good read. <a href="#fnref1" class="footnote-backref">↩︎</a></p>
 </li>
-<li id="fn2" class="footnote-item"><p>This proof technique is known as <em><a href="https://en.wikipedia.org/wiki/Coupling_(probability)">coupling</a></em> is used throughout probability theory and stochastic processes. <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+<li id="fn2" class="footnote-item"><p>The topic of <em>ergodicity</em> extends well beyond Markov chains and stochastic processes. If you're interested in learning more, the <a href="https://en.wikipedia.org/wiki/Ergodicity">Wikipedia page</a> is a good place to start. <a href="#fnref2" class="footnote-backref">↩︎</a></p>
 </li>
-<li id="fn3" class="footnote-item"><p>Formally, if $f(n) \sim g(n)$, then $\frac{f(n)}{g(n)} \to 1$ as $n \to \infty$. <a href="#fnref3" class="footnote-backref">↩︎</a> <a href="#fnref3:1" class="footnote-backref">↩︎</a></p>
+<li id="fn3" class="footnote-item"><p>This proof technique is known as <em><a href="https://en.wikipedia.org/wiki/Coupling_(probability)">coupling</a></em> is used throughout probability theory and stochastic processes. <a href="#fnref3" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn4" class="footnote-item"><p>Formally, if $f(n) \sim g(n)$, then $\frac{f(n)}{g(n)} \to 1$ as $n \to \infty$. <a href="#fnref4" class="footnote-backref">↩︎</a> <a href="#fnref4:1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn5" class="footnote-item"><p>The FTMC also holds for <em>countably infinite</em> Markov chains if the recurrent class is <em>positive recurrent</em>, which means that the expected length of a cycle from a state to itself is finite for every state in the class. This is outside the scope of this blog post but worth learning about! <a href="#fnref5" class="footnote-backref">↩︎</a></p>
 </li>
 </ol>
 </section>

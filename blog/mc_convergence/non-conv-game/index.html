@@ -44,14 +44,6 @@
           <span id="edgeInfo" class="hidden text-gray-600 text-sm bg-white px-2 py-1 rounded shadow-sm"></span>
         </div>
 
-        <!-- Live distributions panel (shown during testing, left side below properties) -->
-        <div id="distPanel" class="absolute left-4 top-[360px] w-[340px] bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden hidden">
-          <div class="px-4 py-3 border-b border-gray-100 bg-gray-50">
-            <div class="text-base font-semibold text-gray-900 text-center">Distribution by Initial State</div>
-          </div>
-          <div id="distPanelBody" class="p-3 text-xs"></div>
-        </div>
-
         <!-- Properties panel (floating card, left side) -->
         <div id="propsPanel" class="absolute left-4 top-[120px] w-[340px] bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden">
           <div class="px-4 py-2 border-b border-gray-100 bg-gray-50">
@@ -67,6 +59,24 @@
               <span id="propNonExistText" class="text-sm font-medium text-gray-700 leading-snug group-hover:text-gray-900 transition-colors">Non-existance: ?????</span>
             </label>
           </div>
+        </div>
+
+        <!-- Testing requirements panel (always visible, placed between properties and distribution) -->
+        <div id="testInfoPanel" class="absolute left-4 top-[240px] w-[340px] bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden">
+          <div class="px-4 py-2 border-b border-gray-100 bg-gray-50">
+            <div class="text-base font-semibold text-gray-900 text-center">In order to test</div>
+          </div>
+          <div class="px-4 py-3 text-sm text-gray-700">
+            Every state must have outgoing edges with weights summing to 1. Fractions won't work so please use decimals.
+          </div>
+        </div>
+
+        <!-- Live distributions panel (shown during testing, left side below properties) -->
+        <div id="distPanel" class="absolute left-4 top-[360px] w-[340px] bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden hidden">
+          <div class="px-4 py-3 border-b border-gray-100 bg-gray-50">
+            <div class="text-base font-semibold text-gray-900 text-center">Distribution by Initial State</div>
+          </div>
+          <div id="distPanelBody" class="p-3 text-xs"></div>
         </div>
 
         <!-- Hidden holders to preserve JS hooks -->
@@ -677,10 +687,11 @@
         groups.push({ color, tokens, dist: vectorOneHot(n, gi), lastDist: null, lastDist2: null });
       }
 
-      // Dist panel helpers
+      // Panels: distribution (during testing) and test info (when idle)
       const distPanel = document.getElementById('distPanel');
       const distPanelBody = document.getElementById('distPanelBody');
       const propsPanel = document.getElementById('propsPanel');
+      const testInfoPanel = document.getElementById('testInfoPanel');
       function positionDistPanelBelowProps(){
         if (!distPanel || !propsPanel) return;
         const propsRect = propsPanel.getBoundingClientRect();
@@ -691,6 +702,8 @@
       }
       function showDistPanel(){ distPanel.classList.remove('hidden'); }
       function hideDistPanel(){ distPanel.classList.add('hidden'); }
+      function showTestInfoPanel(){ if (testInfoPanel) testInfoPanel.classList.remove('hidden'); }
+      function hideTestInfoPanel(){ if (testInfoPanel) testInfoPanel.classList.add('hidden'); }
       function updateDistPanel(){
         if (!groups || groups.length === 0) { distPanelBody.innerHTML = ''; return; }
         const headerCells = ['<th class="p-1 text-left">Initial state</th>']
@@ -720,6 +733,8 @@
       toolDeleteBtn.disabled = true;
       if (clearBtn) clearBtn.disabled = true;
       refreshToolButtons();
+      // Replace the test info panel with the distribution panel while testing
+      hideTestInfoPanel();
       showDistPanel();
       positionDistPanelBelowProps();
 
@@ -931,6 +946,7 @@
             if (clearBtn) clearBtn.disabled = false;
             refreshToolButtons();
             hideDistPanel();
+            showTestInfoPanel();
             // Restore token spacing after test ends
             markov.TOKEN_SPACING = previousSpacing;
             describeOutcome(stopReason.type);
@@ -945,7 +961,7 @@
       resultText.textContent = 'Running test... (colors indicate starting state)';
       stepOnce();
 
-      sim = { stop: ()=>{ running=false; testBtn.style.display = 'flex'; stopBtn.style.display = 'none'; toolStateBtn.disabled = false; toolEdgeBtn.disabled = false; toolDeleteBtn.disabled = false; if (clearBtn) clearBtn.disabled = false; refreshToolButtons(); resultText.textContent = 'Stopped.'; hideDistPanel(); clearTokens(); markov.TOKEN_SPACING = previousSpacing; } };
+      sim = { stop: ()=>{ running=false; testBtn.style.display = 'flex'; stopBtn.style.display = 'none'; toolStateBtn.disabled = false; toolEdgeBtn.disabled = false; toolDeleteBtn.disabled = false; if (clearBtn) clearBtn.disabled = false; refreshToolButtons(); resultText.textContent = 'Stopped.'; hideDistPanel(); showTestInfoPanel(); clearTokens(); markov.TOKEN_SPACING = previousSpacing; } };
     }
 
     function stopSimulation(){ if (sim){ sim.stop(); sim=null; } }
@@ -1021,7 +1037,7 @@
       title.textContent = '🎉 Congratulations! 🎉';
       const body = document.createElement('div');
       body.className = 'text-gray-700 mt-2 text-center';
-      body.textContent = 'You discovered both properties that can stop a finite Markov chain from converging to a unique limiting distribution. Press the red X in the top left corner to close this window and return to the blog post.';
+      body.textContent = 'You discovered both properties that can stop a finite Markov chain from converging to a unique limiting distribution. Close this tab when you are ready to return to the blog post.';
       const ok = document.createElement('button');
       ok.className = 'mt-4 px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 block mx-auto';
       ok.textContent = 'Continue';
@@ -1069,5 +1085,3 @@
   </script>
 </body>
 </html>
-
-
