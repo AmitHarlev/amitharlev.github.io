@@ -160,6 +160,20 @@
       if (propNonExistChk) propNonExistChk.checked = !!p;
       if (propNonExistText) propNonExistText.textContent = `No existance: ${p ? 'Periodic' : '?????'}`;
       if (finalCongrats) finalCongrats.classList.toggle('hidden', !(r && p));
+
+      // Reposition the test info panel below the properties panel if visible
+      try {
+        const tip = document.getElementById('testInfoPanel');
+        const props = document.getElementById('propsPanel');
+        const svgEl = document.getElementById('canvas');
+        if (tip && props && svgEl && !tip.classList.contains('hidden')){
+          const propsRect = props.getBoundingClientRect();
+          const containerRect = svgEl.getBoundingClientRect();
+          const margin = 16;
+          const topPx = Math.max(0, (propsRect.bottom - containerRect.top) + margin);
+          tip.style.top = `${topPx}px`;
+        }
+      } catch (_) {}
     }
     updateDiscoveryUI();
 
@@ -702,7 +716,17 @@
       }
       function showDistPanel(){ distPanel.classList.remove('hidden'); }
       function hideDistPanel(){ distPanel.classList.add('hidden'); }
-      function showTestInfoPanel(){ if (testInfoPanel) testInfoPanel.classList.remove('hidden'); }
+      function showTestInfoPanel(){
+        if (testInfoPanel && propsPanel) {
+          // Position directly under properties panel
+          const propsRect = propsPanel.getBoundingClientRect();
+          const containerRect = svg.getBoundingClientRect();
+          const margin = 16;
+          const topPx = Math.max(0, (propsRect.bottom - containerRect.top) + margin);
+          testInfoPanel.style.top = `${topPx}px`;
+          testInfoPanel.classList.remove('hidden');
+        }
+      }
       function hideTestInfoPanel(){ if (testInfoPanel) testInfoPanel.classList.add('hidden'); }
       function updateDistPanel(){
         if (!groups || groups.length === 0) { distPanelBody.innerHTML = ''; return; }
@@ -1059,8 +1083,21 @@
       }
     }
 
-    // Reposition distribution panel on window resize
+    // Reposition panels on window resize
     window.addEventListener('resize', positionDistPanelBelowProps);
+    window.addEventListener('resize', ()=>{
+      try{
+        const tip = document.getElementById('testInfoPanel');
+        const props = document.getElementById('propsPanel');
+        if (tip && props && !tip.classList.contains('hidden')){
+          const propsRect = props.getBoundingClientRect();
+          const containerRect = svg.getBoundingClientRect();
+          const margin = 16;
+          const topPx = Math.max(0, (propsRect.bottom - containerRect.top) + margin);
+          tip.style.top = `${topPx}px`;
+        }
+      }catch(_){}
+    });
 
     // Position properties panel and distribution panel
     function positionPanels() {
@@ -1082,6 +1119,20 @@
     window.addEventListener('resize', positionPanels);
     // Initial call to set correct positions
     positionPanels();
+    // Also position test info panel initially
+    (function(){
+      try{
+        const tip = document.getElementById('testInfoPanel');
+        const props = document.getElementById('propsPanel');
+        if (tip && props && !tip.classList.contains('hidden')){
+          const propsRect = props.getBoundingClientRect();
+          const containerRect = svg.getBoundingClientRect();
+          const margin = 16;
+          const topPx = Math.max(0, (propsRect.bottom - containerRect.top) + margin);
+          tip.style.top = `${topPx}px`;
+        }
+      }catch(_){}
+    })();
   </script>
 </body>
 </html>
