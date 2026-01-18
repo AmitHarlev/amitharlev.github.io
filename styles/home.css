@@ -86,6 +86,31 @@ html {
       margin-right: 10px;
   }
   
+  #headerimg img {
+      max-width: 100%;
+      height: auto;
+  }
+  
+  /* Mobile responsiveness for home page */
+  @media (max-width: 768px) {
+      div#pagetitle {
+          width: 90%;
+          flex-direction: column;
+          align-items: center;
+      }
+      
+      #headerimg {
+          margin-left: 0;
+          margin-top: 20px;
+          width: auto;
+          max-width: 150px;
+      }
+      
+      #name {
+          text-align: center;
+      }
+  }
+  
   #name {
       vertical-align: top;
       text-align: center;
