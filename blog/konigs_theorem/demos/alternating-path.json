@@ -1,0 +1,73 @@
+{
+  "title": "Matching, alternating path, augmenting path, and cover",
+  "caption": "Use the tabs to highlight the same bipartite graph in several different ways.",
+  "leftLabel": "Applicants",
+  "rightLabel": "Jobs",
+  "left": [
+    { "id": "a", "label": "A" },
+    { "id": "b", "label": "B" },
+    { "id": "c", "label": "C" }
+  ],
+  "right": [
+    { "id": "w", "label": "W" },
+    { "id": "x", "label": "X" },
+    { "id": "y", "label": "Y" },
+    { "id": "z", "label": "Z" }
+  ],
+  "edges": [
+    ["a", "w"],
+    ["a", "x"],
+    ["b", "w"],
+    ["b", "y"],
+    ["c", "x"],
+    ["c", "y"],
+    ["c", "z"]
+  ],
+  "matching": [
+    ["a", "w"],
+    ["c", "x"]
+  ],
+  "defaultView": "matching",
+  "views": [
+    {
+      "id": "graph",
+      "label": "Graph",
+      "matching": [],
+      "description": "The graph is bipartite: every edge goes from the left side to the right side."
+    },
+    {
+      "id": "matching",
+      "label": "Matching",
+      "description": "A matching is a set of edges that do not share endpoints. The blue edges form a matching of size 2."
+    },
+    {
+      "id": "alternating",
+      "label": "Alternating path",
+      "path": ["b", "w", "a", "x", "c", "y"],
+      "description": "The dashed arrows show the path direction, and the numbered vertices show the order along the path. The path alternates between edges outside the matching and edges inside the matching."
+    },
+    {
+      "id": "augmenting",
+      "label": "Augmenting path",
+      "path": ["b", "w", "a", "x", "c", "z"],
+      "description": "The dashed arrows and numbered vertices show the order of this alternating path. It starts and ends at unmatched vertices, so it can increase the size of the matching.",
+      "afterMatching": [
+        ["b", "w"],
+        ["a", "x"],
+        ["c", "z"]
+      ],
+      "afterDescription": "After flipping the status of the edges along the path, the matching has size 3."
+    },
+    {
+      "id": "cover",
+      "label": "Vertex cover",
+      "matching": [
+        ["b", "w"],
+        ["a", "x"],
+        ["c", "z"]
+      ],
+      "vertexCover": ["a", "c", "b"],
+      "description": "The purple vertices touch every edge in this graph. This cover has size 3, matching the maximum matching produced by the augmenting path."
+    }
+  ]
+}

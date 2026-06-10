@@ -1,0 +1,41 @@
+{
+  "title": "Matching, alternating path, augmenting path, and cover",
+  "caption": "Use the tabs to highlight the same bipartite graph in several different ways.",
+  "showSideLabels": true,
+  "leftLabel": "Rows",
+  "rightLabel": "Columns",
+  "left": [
+    { "id": "r1", "label": "1" },
+    { "id": "r2", "label": "2" },
+    { "id": "r3", "label": "3" }
+  ],
+  "right": [
+    { "id": "c1", "label": "1" },
+    { "id": "c2", "label": "2" },
+    { "id": "c3", "label": "3" }
+  ],
+  "edges": [
+    ["r1", "c3", "#3185FC"],
+    ["r2", "c3", "#35FF69"],
+    ["r3", "c1", "#F0803C"],
+    ["r3", "c2", "#CD9FCC"]
+  ],
+  "matching": [
+    ["r1", "c3"],
+    ["r3", "c2"]
+  ],
+  "defaultView": "graph",
+  "views": [
+    {
+      "id": "graph",
+      "label": "Graph",
+      "matching": [],
+      "description": "The graph is bipartite: every edge goes from the left side to the right side."
+    },
+    {
+      "id": "matching",
+      "label": "Matching",
+      "description": "A matching is a set of edges that do not share endpoints. The blue edges form a matching of size 2."
+    }
+  ]
+}

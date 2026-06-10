@@ -1,0 +1,74 @@
+{
+  "states": [
+    {
+      "id": 1,
+      "x": 250,
+      "y": 150,
+      "label": "T1",
+      "color": {
+        "name": "Gray",
+        "fill": "#868e96",
+        "stroke": "#495057"
+      },
+      "markovLabelSide": "left"
+    },
+    {
+      "id": 2,
+      "x": 150,
+      "y": 300,
+      "label": "R1",
+      "color": {
+        "name": "Red",
+        "fill": "#ff6b6b",
+        "stroke": "#f03e3e"
+      },
+      "markovLabelSide": "left"
+    },
+    {
+      "id": 3,
+      "x": 350,
+      "y": 300,
+      "label": "R2",
+      "color": {
+        "name": "Orange",
+        "fill": "#ff922b",
+        "stroke": "#f76707"
+      },
+      "markovLabelSide": "right"
+    }
+  ],
+  "edges": [
+    {
+      "id": 1754751680917,
+      "from": 1,
+      "to": 2,
+      "weight": "0.5",
+      "controlX": 200,
+      "controlY": 225
+    },
+    {
+      "id": 1754751684434,
+      "from": 1,
+      "to": 3,
+      "weight": "0.5",
+      "controlX": 300,
+      "controlY": 225
+    },
+    {
+      "id": 1754751738101,
+      "from": 2,
+      "to": 2,
+      "weight": "1",
+      "controlX": 150,
+      "controlY": 455
+    },
+    {
+      "id": 1754751740334,
+      "from": 3,
+      "to": 3,
+      "weight": "1",
+      "controlX": 350,
+      "controlY": 455
+    }
+  ]
+}

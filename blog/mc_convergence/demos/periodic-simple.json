@@ -1,0 +1,46 @@
+{
+  "states": [
+    {
+      "id": 1,
+      "x": 535,
+      "y": 250,
+      "label": "R1-1",
+      "color": {
+        "name": "Red",
+        "fill": "#ff6b6b",
+        "stroke": "#f03e3e"
+      },
+      "markovLabelSide": "left"
+    },
+    {
+      "id": 2,
+      "x": 660,
+      "y": 250,
+      "label": "R1-2",
+      "color": {
+        "name": "Red",
+        "fill": "#ff6b6b",
+        "stroke": "#f03e3e"
+      },
+      "markovLabelSide": "right"
+    }
+  ],
+  "edges": [
+    {
+      "id": 1754964986632,
+      "from": 1,
+      "to": 2,
+      "weight": "1",
+      "controlX": 592.5,
+      "controlY": 325
+    },
+    {
+      "id": 1754964989382,
+      "from": 2,
+      "to": 1,
+      "weight": "1",
+      "controlX": 592.5,
+      "controlY": 175
+    }
+  ]
+}

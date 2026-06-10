@@ -1,0 +1,60 @@
+{
+  "states": [
+    {
+      "id": 1,
+      "x": 535,
+      "y": 250,
+      "label": "Heads",
+      "color": {
+        "name": "Blue",
+        "fill": "#339af0",
+        "stroke": "#1c7ed6"
+      }
+    },
+    {
+      "id": 2,
+      "x": 660,
+      "y": 250,
+      "label": "Tails",
+      "color": {
+        "name": "Blue",
+        "fill": "#339af0",
+        "stroke": "#1c7ed6"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": 1754964986632,
+      "from": 1,
+      "to": 2,
+      "weight": "0.1",
+      "controlX": 592.5,
+      "controlY": 325
+    },
+    {
+      "id": 1754964989382,
+      "from": 2,
+      "to": 1,
+      "weight": "0.1",
+      "controlX": 592.5,
+      "controlY": 175
+    },
+    {
+      "id": 1755499323075,
+      "from": 1,
+      "to": 1,
+      "weight": "0.9",
+      "controlX": 370,
+      "controlY": 250
+    },
+    {
+      "id": 1755499327426,
+      "from": 2,
+      "to": 2,
+      "weight": "0.9",
+      "controlX": 825,
+      "controlY": 250
+    }
+  ]
+}

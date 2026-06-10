@@ -1,0 +1,155 @@
+{
+  "states": [
+    {
+      "id": 1,
+      "x": 290,
+      "y": 350,
+      "label": "R1-1",
+      "color": {
+        "name": "Red",
+        "fill": "#ff6b6b",
+        "stroke": "#f03e3e"
+      }
+    },
+    {
+      "id": 2,
+      "x": 290,
+      "y": 150,
+      "label": "R1-2",
+      "color": {
+        "name": "Red",
+        "fill": "#ff6b6b",
+        "stroke": "#f03e3e"
+      }
+    },
+    {
+      "id": 3,
+      "x": 450,
+      "y": 250,
+      "label": "R1-3",
+      "color": {
+        "name": "Red",
+        "fill": "#ff6b6b",
+        "stroke": "#f03e3e"
+      }
+    },
+    {
+      "id": 4,
+      "x": 990,
+      "y": 250,
+      "label": "R2-1",
+      "color": {
+        "name": "Orange",
+        "fill": "#ff922b",
+        "stroke": "#f76707"
+      }
+    },
+    {
+      "id": 5,
+      "x": 1150,
+      "y": 250,
+      "label": "R2-2",
+      "color": {
+        "name": "Orange",
+        "fill": "#ff922b",
+        "stroke": "#f76707"
+      }
+    },
+    {
+      "id": 6,
+      "x": 795,
+      "y": 250,
+      "label": "T1-2",
+      "color": {
+        "name": "Gray",
+        "fill": "#868e96",
+        "stroke": "#495057"
+      }
+    },
+    {
+      "id": 7,
+      "x": 635,
+      "y": 250,
+      "label": "T1-1",
+      "color": {
+        "name": "Gray",
+        "fill": "#868e96",
+        "stroke": "#495057"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": 1754974421685,
+      "from": 1,
+      "to": 2,
+      "weight": "1",
+      "controlX": 290,
+      "controlY": 255
+    },
+    {
+      "id": 1754974423717,
+      "from": 2,
+      "to": 3,
+      "weight": "1",
+      "controlX": 370,
+      "controlY": 200
+    },
+    {
+      "id": 1754974426251,
+      "from": 3,
+      "to": 1,
+      "weight": "1",
+      "controlX": 370,
+      "controlY": 300
+    },
+    {
+      "id": 1754974437668,
+      "from": 4,
+      "to": 5,
+      "weight": "1",
+      "controlX": 1070,
+      "controlY": 300
+    },
+    {
+      "id": 1754974439800,
+      "from": 5,
+      "to": 4,
+      "weight": "1",
+      "controlX": 1070,
+      "controlY": 200
+    },
+    {
+      "id": 1754974459202,
+      "from": 6,
+      "to": 7,
+      "weight": "0.8",
+      "controlX": 715,
+      "controlY": 200
+    },
+    {
+      "id": 1754974461733,
+      "from": 7,
+      "to": 6,
+      "weight": "0.9",
+      "controlX": 715,
+      "controlY": 300
+    },
+    {
+      "id": 1754974464118,
+      "from": 6,
+      "to": 4,
+      "weight": "0.2",
+      "controlX": 892.5,
+      "controlY": 250
+    },
+    {
+      "id": 1754974466117,
+      "from": 7,
+      "to": 3,
+      "weight": "0.1",
+      "controlX": 541.3204282311127,
+      "controlY": 250
+    }
+  ]
+}

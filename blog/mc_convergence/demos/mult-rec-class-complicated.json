@@ -1,0 +1,242 @@
+{
+  "states": [
+    {
+      "id": 1,
+      "x": 650,
+      "y": 200,
+      "label": "T1-1",
+      "color": {
+        "name": "Gray",
+        "fill": "#868e96",
+        "stroke": "#495057"
+      },
+      "markovLabelSide": "down"
+    },
+    {
+      "id": 2,
+      "x": 550,
+      "y": 350,
+      "label": "T1-2",
+      "color": {
+        "name": "Gray",
+        "fill": "#868e96",
+        "stroke": "#495057"
+      },
+      "markovLabelSide": "down"
+    },
+    {
+      "id": 3,
+      "x": 750,
+      "y": 350,
+      "label": "T1-3",
+      "color": {
+        "name": "Gray",
+        "fill": "#868e96",
+        "stroke": "#495057"
+      },
+      "markovLabelSide": "down"
+    },
+    {
+      "id": 4,
+      "x": 650,
+      "y": 75,
+      "label": "R1-1",
+      "color": {
+        "name": "Red",
+        "fill": "#ff6b6b",
+        "stroke": "#f03e3e"
+      },
+      "markovLabelSide": "left"
+    },
+    {
+      "id": 5,
+      "x": 350,
+      "y": 495,
+      "label": "R2-2",
+      "color": {
+        "name": "Orange",
+        "fill": "#ff922b",
+        "stroke": "#f76707"
+      },
+      "markovLabelSide": "left"
+    },
+    {
+      "id": 6,
+      "x": 350,
+      "y": 350,
+      "label": "R2-1",
+      "color": {
+        "name": "Orange",
+        "fill": "#ff922b",
+        "stroke": "#f76707"
+      },
+      "markovLabelSide": "left"
+    },
+    {
+      "id": 7,
+      "x": 895,
+      "y": 495,
+      "label": "R3-3",
+      "color": {
+        "name": "Yellow",
+        "fill": "#ffd43b",
+        "stroke": "#fab005"
+      },
+      "markovLabelSide": "left"
+    },
+    {
+      "id": 8,
+      "x": 895,
+      "y": 350,
+      "label": "R3-1",
+      "color": {
+        "name": "Yellow",
+        "fill": "#ffd43b",
+        "stroke": "#fab005"
+      },
+      "markovLabelSide": "up"
+    },
+    {
+      "id": 9,
+      "x": 1050,
+      "y": 350,
+      "label": "R3-2",
+      "color": {
+        "name": "Yellow",
+        "fill": "#ffd43b",
+        "stroke": "#fab005"
+      },
+      "markovLabelSide": "up"
+    }
+  ],
+  "edges": [
+    {
+      "id": 1754752153221,
+      "from": 1,
+      "to": 2,
+      "weight": "0.7",
+      "controlX": 510,
+      "controlY": 215
+    },
+    {
+      "id": 1754752156022,
+      "from": 2,
+      "to": 3,
+      "weight": "0.5",
+      "controlX": 650,
+      "controlY": 500
+    },
+    {
+      "id": 1754752157972,
+      "from": 3,
+      "to": 1,
+      "weight": "0.8",
+      "controlX": 790,
+      "controlY": 215
+    },
+    {
+      "id": 1754754006268,
+      "from": 1,
+      "to": 4,
+      "weight": "0.3",
+      "controlX": 650,
+      "controlY": 150
+    },
+    {
+      "id": 1754754008985,
+      "from": 2,
+      "to": 5,
+      "weight": "0.25",
+      "controlX": 450,
+      "controlY": 422.5
+    },
+    {
+      "id": 1754754011184,
+      "from": 2,
+      "to": 6,
+      "weight": "0.25",
+      "controlX": 462.5,
+      "controlY": 350
+    },
+    {
+      "id": 1754754021984,
+      "from": 6,
+      "to": 6,
+      "weight": "0.4",
+      "controlX": 350,
+      "controlY": 195
+    },
+    {
+      "id": 1754754023501,
+      "from": 5,
+      "to": 5,
+      "weight": "0.7",
+      "controlX": 350,
+      "controlY": 650
+    },
+    {
+      "id": 1754754035067,
+      "from": 6,
+      "to": 5,
+      "weight": "0.6",
+      "controlX": 299.7645647306497,
+      "controlY": 424.70419036142505
+    },
+    {
+      "id": 1754754037134,
+      "from": 5,
+      "to": 6,
+      "weight": "0.3",
+      "controlX": 399.4227887392508,
+      "controlY": 424.0992124989621
+    },
+    {
+      "id": 1754754041985,
+      "from": 8,
+      "to": 9,
+      "weight": "0.3",
+      "controlX": 972.5,
+      "controlY": 375
+    },
+    {
+      "id": 1754754044217,
+      "from": 8,
+      "to": 7,
+      "weight": "0.7",
+      "controlX": 895,
+      "controlY": 412.5
+    },
+    {
+      "id": 1754754046568,
+      "from": 7,
+      "to": 9,
+      "weight": "1",
+      "controlX": 972.5,
+      "controlY": 425
+    },
+    {
+      "id": 1754754050417,
+      "from": 9,
+      "to": 8,
+      "weight": "1",
+      "controlX": 972.5,
+      "controlY": 325
+    },
+    {
+      "id": 1754754066451,
+      "from": 3,
+      "to": 8,
+      "weight": "0.2",
+      "controlX": 815,
+      "controlY": 350
+    },
+    {
+      "id": 1754754802563,
+      "from": 4,
+      "to": 4,
+      "weight": "1",
+      "controlX": 650,
+      "controlY": -80
+    }
+  ]
+}

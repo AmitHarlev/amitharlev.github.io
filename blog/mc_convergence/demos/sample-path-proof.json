@@ -1,0 +1,147 @@
+{
+  "states": [
+    {
+      "id": 1,
+      "x": 500,
+      "y": 150,
+      "label": "1",
+      "color": {
+        "name": "Blue",
+        "fill": "#339af0",
+        "stroke": "#1c7ed6"
+      },
+      "markovLabelSide": "up"
+    },
+    {
+      "id": 2,
+      "x": 350,
+      "y": 400,
+      "label": "2",
+      "color": {
+        "name": "Blue",
+        "fill": "#339af0",
+        "stroke": "#1c7ed6"
+      }
+    },
+    {
+      "id": 3,
+      "x": 650,
+      "y": 400,
+      "label": "3",
+      "color": {
+        "name": "Blue",
+        "fill": "#339af0",
+        "stroke": "#1c7ed6"
+      }
+    },
+    {
+      "id": 4,
+      "x": 500,
+      "y": 300,
+      "label": "j",
+      "color": {
+        "name": "Blue",
+        "fill": "#339af0",
+        "stroke": "#1c7ed6"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": 1755114029851,
+      "from": 1,
+      "to": 2,
+      "weight": "0.4",
+      "controlX": 309,
+      "controlY": 202
+    },
+    {
+      "id": 1755114032038,
+      "from": 2,
+      "to": 3,
+      "weight": "0.2",
+      "controlX": 500,
+      "controlY": 520
+    },
+    {
+      "id": 1755114034668,
+      "from": 3,
+      "to": 1,
+      "weight": "0.4",
+      "controlX": 700,
+      "controlY": 200
+    },
+    {
+      "id": 1755114044235,
+      "from": 2,
+      "to": 1,
+      "weight": "0.1",
+      "controlX": 365,
+      "controlY": 240
+    },
+    {
+      "id": 1755114078735,
+      "from": 4,
+      "to": 1,
+      "weight": "0.3",
+      "controlX": 532.5,
+      "controlY": 215
+    },
+    {
+      "id": 1755114080935,
+      "from": 1,
+      "to": 4,
+      "weight": "0.2",
+      "controlX": 472.5,
+      "controlY": 215
+    },
+    {
+      "id": 1755114082934,
+      "from": 2,
+      "to": 4,
+      "weight": "0.7",
+      "controlX": 440,
+      "controlY": 360
+    },
+    {
+      "id": 1755114084951,
+      "from": 4,
+      "to": 2,
+      "weight": "0.4",
+      "controlX": 405,
+      "controlY": 310
+    },
+    {
+      "id": 1755114086868,
+      "from": 4,
+      "to": 3,
+      "weight": "0.3",
+      "controlX": 560,
+      "controlY": 357.5
+    },
+    {
+      "id": 1755114088669,
+      "from": 3,
+      "to": 4,
+      "weight": "0.3",
+      "controlX": 590,
+      "controlY": 305
+    },
+    {
+      "id": 1755114091668,
+      "from": 1,
+      "to": 3,
+      "weight": "0.4",
+      "controlX": 640,
+      "controlY": 235
+    },
+    {
+      "id": 1755114104702,
+      "from": 3,
+      "to": 2,
+      "weight": "0.3",
+      "controlX": 500,
+      "controlY": 470
+    }
+  ]
+}
