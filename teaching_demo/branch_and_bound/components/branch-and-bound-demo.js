@@ -67,7 +67,8 @@ function fmt(value, digits = 2) {
   }
 
   const fixed = Number(value).toFixed(digits);
-  return fixed.replace(/\.?0+$/, "");
+  const trimmed = fixed.replace(/\.?0+$/, "");
+  return trimmed === "" || trimmed === "-" ? "0" : trimmed;
 }
 
 function escapeHtml(value) {
