@@ -1934,6 +1934,14 @@ class BranchAndBoundDemo extends HTMLElement {
   }
 
   render() {
+    const previousTreeScroll = this.shadowRoot.querySelector(".tree-scroll");
+    const treeScrollPosition = previousTreeScroll
+      ? {
+        left: previousTreeScroll.scrollLeft,
+        top: previousTreeScroll.scrollTop
+      }
+      : null;
+
     this.shadowRoot.innerHTML = `
       ${this.styles()}
       <div class="demo">
@@ -1995,6 +2003,15 @@ class BranchAndBoundDemo extends HTMLElement {
       });
       region.addEventListener("click", () => this.selectNode(region.dataset.nodeId));
     });
+
+    if (treeScrollPosition) {
+      const treeScroll = this.shadowRoot.querySelector(".tree-scroll");
+
+      if (treeScroll) {
+        treeScroll.scrollLeft = treeScrollPosition.left;
+        treeScroll.scrollTop = treeScrollPosition.top;
+      }
+    }
   }
 
   styles() {
