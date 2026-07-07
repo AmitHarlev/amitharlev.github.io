@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ENGR 1101 Office Hours Admin</title>
+    <style>
+      :root {
+        color: #202124;
+        background: #f6f7f9;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 28px;
+      }
+      main {
+        width: min(1120px, 100%);
+        margin: 0 auto;
+      }
+      h1 {
+        margin: 0 0 20px;
+        font-size: 2rem;
+      }
+      h2 {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+      .panel {
+        border: 1px solid #d9dee7;
+        border-radius: 8px;
+        background: white;
+        margin-bottom: 16px;
+      }
+      .panel-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        border-bottom: 1px solid #e7ebf0;
+        padding: 14px 16px;
+      }
+      .panel-body {
+        padding: 16px;
+      }
+      form {
+        display: grid;
+        gap: 12px;
+      }
+      input,
+      textarea,
+      button {
+        border-radius: 6px;
+        font: inherit;
+      }
+      input,
+      textarea {
+        border: 1px solid #c9d0dc;
+        padding: 10px 12px;
+      }
+      textarea {
+        min-height: 140px;
+        resize: vertical;
+      }
+      input[type="file"] {
+        background: white;
+      }
+      button {
+        min-height: 40px;
+        border: 0;
+        background: #174ea6;
+        color: white;
+        cursor: pointer;
+        font-weight: 750;
+        padding: 8px 12px;
+      }
+      button.secondary {
+        background: #3c4043;
+      }
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.65;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+      }
+      .login {
+        width: min(100%, 480px);
+        margin: 12vh auto;
+      }
+      .notice {
+        display: none;
+        margin-top: 12px;
+        border-radius: 8px;
+        border: 1px solid #f4d37d;
+        background: #fff8e1;
+        color: #8a4b00;
+        padding: 12px 14px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border-bottom: 1px solid #edf0f4;
+        padding: 10px 12px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        color: #5f6368;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 12px;
+      }
+      .stat {
+        border: 1px solid #d9dee7;
+        border-radius: 8px;
+        background: white;
+        padding: 14px;
+      }
+      .stat span {
+        display: block;
+        color: #5f6368;
+      }
+      .stat strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 1.7rem;
+      }
+      @media (max-width: 700px) {
+        body {
+          padding: 14px;
+        }
+        table,
+        thead,
+        tbody,
+        tr,
+        th,
+        td {
+          display: block;
+        }
+        thead {
+          display: none;
+        }
+        tr {
+          border-bottom: 1px solid #edf0f4;
+          padding: 8px 0;
+        }
+        td {
+          border: 0;
+          padding: 5px 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section id="login" class="panel login">
+        <div class="panel-header"><h2>Admin sign-in</h2></div>
+        <div class="panel-body">
+          <form id="email-form">
+            <input id="email" type="email" value="ah843@cornell.edu" />
+            <button type="submit">Send magic code</button>
+          </form>
+          <form id="code-form" style="display: none; margin-top: 12px">
+            <input id="magic-code" autocomplete="one-time-code" placeholder="Magic code" />
+            <button type="submit">Verify code</button>
+          </form>
+          <div id="login-message" class="notice"></div>
+        </div>
+      </section>
+
+      <section id="dashboard" style="display: none">
+        <div class="row" style="justify-content: space-between; margin-bottom: 16px">
+          <h1>ENGR 1101 office hours submissions</h1>
+          <div class="row">
+            <button id="export-status" type="button">Export status CSV</button>
+            <button id="print-accepted" type="button">Generate accepted PDF</button>
+            <button id="sign-out" class="secondary">Sign out</button>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><span>Assigned cards</span><strong id="stat-assignments">0</strong></div>
+          <div class="stat"><span>Accepted</span><strong id="stat-accepted">0</strong></div>
+          <div class="stat"><span>Problems</span><strong id="stat-problems">0</strong></div>
+          <div class="stat"><span>Total attempts</span><strong id="stat-total">0</strong></div>
+        </div>
+
+        <section class="panel" style="margin-top: 16px">
+          <div class="panel-header"><h2>Import assigned cards</h2><span>CSV: student name, student ID, NetID, code</span></div>
+          <div class="panel-body">
+            <form id="import-form">
+              <input id="assignment-csv" type="file" accept=".csv,text/csv" />
+              <button type="submit">Import assignments</button>
+            </form>
+            <div id="import-message" class="notice"></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header"><h2>Assigned cards</h2><span id="assignment-count">0 rows</span></div>
+          <div class="panel-body" id="assignments-table"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header"><h2>Problem submissions</h2><span id="problem-count">0 rows</span></div>
+          <div class="panel-body" id="problems-table"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header"><h2>All submissions</h2><span id="submission-count">0 rows</span></div>
+          <div class="panel-body" id="submissions-table"></div>
+        </section>
+      </section>
+    </main>
+
+    <script type="module">
+      import { init, id } from "https://esm.sh/@instantdb/core@1.0.49";
+
+      const APP_ID = "23ef9475-df9f-420a-ad86-daad2f7a704d";
+      const db = init({ appId: APP_ID });
+
+      const login = document.querySelector("#login");
+      const dashboard = document.querySelector("#dashboard");
+      const loginMessage = document.querySelector("#login-message");
+      const emailForm = document.querySelector("#email-form");
+      const codeForm = document.querySelector("#code-form");
+      const emailInput = document.querySelector("#email");
+      const codeInput = document.querySelector("#magic-code");
+      const importForm = document.querySelector("#import-form");
+      const importMessage = document.querySelector("#import-message");
+      const assignmentCsvInput = document.querySelector("#assignment-csv");
+      let sentEmail = "";
+      let unsubscribe = null;
+      let latestData = { ohCodeAssignments: [], ohCodeClaims: [], ohCodeSubmissions: [] };
+
+      function normalizeNetid(value) {
+        return value.trim().toLowerCase().replace(/@cornell\.edu$/i, "");
+      }
+
+      function normalizeCode(value) {
+        return value.trim().toUpperCase().replace(/\s+/g, "");
+      }
+
+      function pairKey(netid, code) {
+        return `${netid}::${code}`;
+      }
+
+      function showNotice(el, text) {
+        el.textContent = text;
+        el.style.display = "block";
+      }
+
+      function formatDate(value) {
+        return new Intl.DateTimeFormat("en-US", {
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+        }).format(new Date(value));
+      }
+
+      function table(headers, rows, empty) {
+        if (!rows.length) return `<p>${empty}</p>`;
+        return `
+          <table>
+            <thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead>
+            <tbody>
+              ${rows.map((row) => `<tr>${row.map((cell) => `<td>${cell ?? ""}</td>`).join("")}</tr>`).join("")}
+            </tbody>
+          </table>`;
+      }
+
+      function parseCsv(text) {
+        const rows = [];
+        let row = [];
+        let value = "";
+        let inQuotes = false;
+
+        for (let i = 0; i < text.length; i += 1) {
+          const char = text[i];
+          const next = text[i + 1];
+          if (char === '"' && inQuotes && next === '"') {
+            value += '"';
+            i += 1;
+          } else if (char === '"') {
+            inQuotes = !inQuotes;
+          } else if (char === "," && !inQuotes) {
+            row.push(value);
+            value = "";
+          } else if ((char === "\n" || char === "\r") && !inQuotes) {
+            if (char === "\r" && next === "\n") i += 1;
+            row.push(value);
+            if (row.some((cell) => cell.trim())) rows.push(row);
+            row = [];
+            value = "";
+          } else {
+            value += char;
+          }
+        }
+        row.push(value);
+        if (row.some((cell) => cell.trim())) rows.push(row);
+        return rows;
+      }
+
+      function csvEscape(value) {
+        const text = String(value ?? "");
+        return /[",\n\r]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+      }
+
+      function htmlEscape(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+      }
+
+      function headerKey(value) {
+        return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+      }
+
+      function parseAssignments(text) {
+        const csvRows = parseCsv(text);
+        const rows = [];
+        const skipped = [];
+        const seenNetids = new Set();
+        const seenCodes = new Set();
+
+        if (csvRows.length < 2) return { rows, skipped: csvRows.map((row) => row.join(",")) };
+
+        const headers = csvRows[0].map(headerKey);
+        const indexFor = (...names) => headers.findIndex((header) => names.includes(header));
+        const nameIndex = indexFor("studentname", "name");
+        const studentIdIndex = indexFor("studentid", "studentnumber", "sid", "id");
+        const netidIndex = indexFor("netid", "cornellnetid");
+        const codeIndex = indexFor("code", "officehourscode", "ohcode");
+
+        if ([nameIndex, studentIdIndex, netidIndex, codeIndex].some((index) => index < 0)) {
+          return { rows, skipped: csvRows.slice(1).map((row) => row.join(",")) };
+        }
+
+        for (const csvRow of csvRows.slice(1)) {
+          const studentName = (csvRow[nameIndex] || "").trim();
+          const studentId = (csvRow[studentIdIndex] || "").trim();
+          const netid = normalizeNetid(csvRow[netidIndex] || "");
+          const normalizedCode = normalizeCode(csvRow[codeIndex] || "");
+          if (!/^[a-z]{2,}[0-9]*$/.test(netid) || normalizedCode.length < 3 || seenNetids.has(netid) || seenCodes.has(normalizedCode)) {
+            skipped.push(csvRow.join(","));
+            continue;
+          }
+          seenNetids.add(netid);
+          seenCodes.add(normalizedCode);
+          rows.push({
+            studentName,
+            studentId,
+            netid,
+            normalizedCode,
+            displayCode: normalizedCode,
+            pairKey: pairKey(netid, normalizedCode),
+          });
+        }
+        return { rows, skipped };
+      }
+
+      function render(data) {
+        latestData = data;
+        const assignments = [...(data.ohCodeAssignments || [])].sort((a, b) => a.netid.localeCompare(b.netid));
+        const claims = [...(data.ohCodeClaims || [])].sort((a, b) => (a.claimedAt || 0) - (b.claimedAt || 0));
+        const submissions = [...(data.ohCodeSubmissions || [])].sort((a, b) => (a.submittedAt || 0) - (b.submittedAt || 0));
+        const claimsByPair = new Map(claims.map((claim) => [claim.assignmentPairKey, claim]));
+        const problems = submissions.filter((row) => row.status !== "unique_code");
+
+        document.querySelector("#stat-assignments").textContent = assignments.length;
+        document.querySelector("#stat-accepted").textContent = claims.length;
+        document.querySelector("#stat-problems").textContent = problems.length;
+        document.querySelector("#stat-total").textContent = submissions.length;
+        document.querySelector("#assignment-count").textContent = `${assignments.length} rows`;
+        document.querySelector("#problem-count").textContent = `${problems.length} rows`;
+        document.querySelector("#submission-count").textContent = `${submissions.length} rows`;
+
+        document.querySelector("#assignments-table").innerHTML = table(
+          ["Student", "Student ID", "NetID", "Assigned code", "Status", "Submitted"],
+          assignments.map((assignment) => {
+            const claim = claimsByPair.get(assignment.pairKey);
+            return [
+              assignment.studentName,
+              assignment.studentId,
+              assignment.netid,
+              assignment.displayCode,
+              claim ? "Accepted" : "Not submitted",
+              claim ? formatDate(claim.claimedAt) : "",
+            ];
+          }),
+          "No assigned cards imported yet.",
+        );
+
+        document.querySelector("#problems-table").innerHTML = table(
+          ["NetID", "Submitted code", "Status", "When"],
+          problems.map((row) => [row.netid, row.displayCode, row.status, formatDate(row.submittedAt)]),
+          "No wrong or used-code submissions yet.",
+        );
+
+        document.querySelector("#submissions-table").innerHTML = table(
+          ["NetID", "Submitted code", "Status", "When"],
+          submissions.map((row) => [row.netid, row.displayCode, row.status, formatDate(row.submittedAt)]),
+          "No submissions yet.",
+        );
+      }
+
+      emailForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        sentEmail = emailInput.value.trim().toLowerCase();
+        try {
+          await db.auth.sendMagicCode({ email: sentEmail });
+          codeForm.style.display = "grid";
+          showNotice(loginMessage, "Check your email for the Instant sign-in code.");
+        } catch (_) {
+          showNotice(loginMessage, "Could not send a sign-in code for that email.");
+        }
+      });
+
+      codeForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        try {
+          await db.auth.signInWithMagicCode({ email: sentEmail, code: codeInput.value.trim() });
+        } catch (_) {
+          showNotice(loginMessage, "That code did not work. Check the email and try again.");
+        }
+      });
+
+      importForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const file = assignmentCsvInput.files[0];
+        if (!file) {
+          showNotice(importMessage, "Choose a CSV file first.");
+          return;
+        }
+        const parsed = parseAssignments(await file.text());
+        if (!parsed.rows.length) {
+          showNotice(importMessage, "No valid assignments found. The CSV needs headers for student name, student ID, NetID, and code.");
+          return;
+        }
+        try {
+          const now = Date.now();
+          const existingAssignmentNetids = new Set((latestData.ohCodeAssignments || []).map((row) => row.netid));
+          const existingLookupNetids = new Set((latestData.ohCodeNetids || []).map((row) => row.netid));
+          const chunks = parsed.rows.flatMap((row) => {
+            const writes = [];
+            if (!existingAssignmentNetids.has(row.netid)) {
+              writes.push(
+                db.tx.ohCodeAssignments[id()].create({
+                  ...row,
+                  createdAt: now,
+                  importedBy: sentEmail || "admin",
+                }),
+              );
+            }
+            if (!existingLookupNetids.has(row.netid)) {
+              writes.push(
+                db.tx.ohCodeNetids[id()].create({
+                  netid: row.netid,
+                  createdAt: now,
+                  importedBy: sentEmail || "admin",
+                }),
+              );
+            }
+            return writes;
+          });
+          if (!chunks.length) {
+            showNotice(importMessage, "All assignments in this CSV were already imported.");
+            return;
+          }
+          await db.transact(
+            chunks,
+          );
+          assignmentCsvInput.value = "";
+          showNotice(importMessage, `Processed ${parsed.rows.length} assignment(s). Wrote ${chunks.length} row(s). Skipped ${parsed.skipped.length}.`);
+        } catch (error) {
+          const detail = error?.body?.message || error?.message || "Unknown InstantDB error.";
+          showNotice(importMessage, `Could not import: ${detail}`);
+        }
+      });
+
+      document.querySelector("#export-status").addEventListener("click", () => {
+        const assignments = [...(latestData.ohCodeAssignments || [])].sort((a, b) => a.netid.localeCompare(b.netid));
+        const claimsByPair = new Map((latestData.ohCodeClaims || []).map((claim) => [claim.assignmentPairKey, claim]));
+        const rows = [
+          ["student name", "student ID", "netID", "code", "submitted"],
+          ...assignments.map((assignment) => [
+            assignment.studentName || "",
+            assignment.studentId || "",
+            assignment.netid,
+            assignment.displayCode,
+            claimsByPair.has(assignment.pairKey) ? "1" : "0",
+          ]),
+        ];
+        const csv = rows.map((row) => row.map(csvEscape).join(",")).join("\n");
+        const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "engr1101-oh-code-status.csv";
+        link.click();
+        URL.revokeObjectURL(url);
+      });
+
+      document.querySelector("#print-accepted").addEventListener("click", () => {
+        const claimsByPair = new Map((latestData.ohCodeClaims || []).map((claim) => [claim.assignmentPairKey, claim]));
+        const accepted = [...(latestData.ohCodeAssignments || [])]
+          .filter((assignment) => claimsByPair.has(assignment.pairKey))
+          .sort((a, b) => a.netid.localeCompare(b.netid));
+
+        if (!accepted.length) {
+          showNotice(importMessage, "No accepted submissions yet.");
+          return;
+        }
+
+        const pages = accepted
+          .map(
+            (assignment) => `
+              <section class="card-page">
+                <div>
+                  <span>Name</span>
+                  <strong>${htmlEscape(assignment.studentName)}</strong>
+                </div>
+                <div>
+                  <span>Student ID</span>
+                  <strong>${htmlEscape(assignment.studentId)}</strong>
+                </div>
+                <div>
+                  <span>NetID</span>
+                  <strong>${htmlEscape(assignment.netid)}</strong>
+                </div>
+                <div>
+                  <span>Code</span>
+                  <strong>${htmlEscape(assignment.displayCode)}</strong>
+                </div>
+              </section>`,
+          )
+          .join("");
+
+        const printWindow = window.open("", "_blank");
+        if (!printWindow) {
+          showNotice(importMessage, "Allow popups for this page to generate the PDF.");
+          return;
+        }
+
+        printWindow.document.write(`
+          <!doctype html>
+          <html>
+            <head>
+              <meta charset="utf-8" />
+              <title>ENGR 1101 Accepted Office Hours Codes</title>
+              <style>
+                @page { size: letter; margin: 0.75in; }
+                * { box-sizing: border-box; }
+                body {
+                  margin: 0;
+                  color: #111827;
+                  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                }
+                .card-page {
+                  min-height: calc(11in - 1.5in);
+                  display: grid;
+                  align-content: center;
+                  gap: 34px;
+                  page-break-after: always;
+                  break-after: page;
+                }
+                .card-page:last-child {
+                  page-break-after: auto;
+                  break-after: auto;
+                }
+                div {
+                  display: grid;
+                  gap: 8px;
+                }
+                span {
+                  color: #5f6368;
+                  font-size: 14px;
+                  font-weight: 750;
+                  text-transform: uppercase;
+                }
+                strong {
+                  font-size: 42px;
+                  line-height: 1.1;
+                  font-weight: 750;
+                }
+              </style>
+            </head>
+            <body>${pages}</body>
+          </html>
+        `);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+      });
+
+      document.querySelector("#sign-out").addEventListener("click", () => db.auth.signOut());
+
+      db.subscribeAuth((auth) => {
+        if (auth.user) {
+          login.style.display = "none";
+          dashboard.style.display = "block";
+          if (!unsubscribe) {
+            unsubscribe = db.subscribeQuery(
+              { ohCodeAssignments: {}, ohCodeNetids: {}, ohCodeClaims: {}, ohCodeSubmissions: {} },
+              (resp) => {
+                if (resp.data) render(resp.data);
+              },
+            );
+          }
+        } else {
+          if (unsubscribe) {
+            unsubscribe();
+            unsubscribe = null;
+          }
+          login.style.display = "block";
+          dashboard.style.display = "none";
+        }
+      });
+    </script>
+  </body>
+</html>
