@@ -15,6 +15,16 @@ const SVG_PLOT = {
 
 const PRESETS = [
   {
+    id: "example_0",
+    name: "Example 0",
+    objective: { x: 5, y: 8 },
+    range: RANGE,
+    constraints: [
+      { a: 1, b: 1, r: 6, label: "x + y <= 6" },
+      { a: 5, b: 9, r: 45, label: "5x + 9y <= 45" }
+    ]
+  },
+  {
     id: "example_1",
     name: "Example 1",
     objective: { x: 10, y: 1 },
