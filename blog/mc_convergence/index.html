@@ -338,7 +338,7 @@ $$\frac{V^j_1(i) + \cdots + V^j_k(i)}{k} \to \mathbf E[V^j(i)] \quad \text{and} 
 <markov-demo config="./demos/sample-path-proof.json" mode="sample-proof" size="large-ish" start-state-label="2" proof-target-state-label="j"></markov-demo>
 </div>
 <p>Now, as $n$ gets large, the number of direct transitions from $i$ to $j$ will converge to exactly a $P_{ij}$ fraction of the number of visits to state $i$ (this can also be seen in the simulation!):
-$$T_n(i,j) \sim P_{ij} \cdot S_n(i).$$ (Recall that $\sim$ means that the expressions converge as $n \to \infty$.<sup class="footnote-ref"><a href="#fn4" id="fnref4:1">[4:1]</a></sup>)</p>
+$$T_n(i,j) \sim P_{ij} \cdot S_n(i).$$ (Recall that $\sim$ means that the expressions converge as $n \to \infty$.<sup class="footnote-ref"><a href="#fn4" id="fnref4:1">[4]</a></sup>)</p>
 <p>Thus, using the fact that $\mathbf x(j)$ is the limiting fraction of time at state $j$:
 $$\mathbf x(j) = \lim_{n \to \infty} \frac{S_n(j)}{n} =  \lim_{n \to \infty} \sum_i \frac{T_n(i,j)}{n} = \sum_i \lim_{n \to \infty} \frac{P_{ij} \cdot S_n(i)}{n} = \sum_i P_{ij} \mathbf x(i).$$</p>
 <p>Since this holds for any state $j$, we have $\mathbf x(j) = (\mathbf x P)_j$ for all $j$, which means $\mathbf x = \mathbf x P$.</p>
