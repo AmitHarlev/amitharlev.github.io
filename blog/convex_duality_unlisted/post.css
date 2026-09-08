@@ -1,0 +1,8 @@
+.post-content { display: grid; gap: 40px; }
+.post-content > p { margin: 0; }
+.demo-block { min-width: 0; }
+.theorem-box { margin: 24px 0; padding: 22px 26px; border: 1px solid #000; }
+.duality-note { margin: 0; color: #333; font: 17px/1.65 Georgia, serif; min-width: 0; }
+.duality-note p { margin: 0 0 14px; }
+.duality-note p:last-child { margin-bottom: 0; }
+.duality-note mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Duality in convex programming</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+
+    
+        <link rel="stylesheet" href="/styles/blog.css" />
+
+        <script>
+        window.MathJax = {
+            tex: {
+              inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+        </script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    
+  </head>
+  <body>
+    
+        <header class="header">
+    <a class="logo" href="/">Amit Harlev</a>
+    <nav>
+      <a href="/blog">Blog</a>
+    </nav>
+  </header>
+    
+    
+<div class="container">
+  
+    <h1 class="title">
+      Duality in convex programming<br>
+      <span class="subtitle"></span>
+    </h1>
+  
+
+  
+
+  <link rel="stylesheet" href="/blog/convex_duality_unlisted/post.css">
+<div class="post-content">
+<section class="duality-note" aria-label="Linear program for the first demo">
+<p>Imagine you have a solution to the following LP and you want to prove to your boss that it is optimal.</p>
+$$
+\begin{array}{rl}
+\text{maximize} & x_1+2x_2 \\
+\text{subject to} & -x_1+4x_2\le24, \\
+& x_1+x_2\le9, \\
+& 2x_1-2x_2\le11, \\
+& 2x_1+3x_2\le25, \\
+& x_1,x_2\ge0.
+\end{array}
+$$
+<p>You know the optimal solution is $x_1^* = 2.4$ and $x_2^* = 6.6$ because you ran the simplex algorithm. However, your boss is worried you had a bug in your code and wants a quick and easy way to certify that this solution is actually optimal. How might you do this?</p>
+<p>One way is to find an upper bound on the optimal value of this LP. If we can show that $x_1^* + 2x_2^* = 15.6$ is an upper bound, that would prove our solution is optimal (because we have a solution that is as good as the upper bound). That just shifts the question: how do we find an upper bound?</p>
+<p>If you look at the set of constraints, you will notice that one of them is $2x_1+3x_2\le25$. Since we are only considering $x_1, x_2 \geq 0$, it follows that $2x_1 + 3x_2 \geq x_1 + 2x_2$, which is our objective. Thus, it must be that $x_1 + 2x_2 \leq 25$ and so $25$ is an upper bound on the optimal value. Unfortunately, this doesn't help us prove our solution is optimal, or even close to optimal, since $25$ is a lot bigger than $15.6$. But we can find a tighter upper bound!</p>
+<p>We have the constraint $x_1+x_2\le9$. If we double both sides, we get $2x_1+2x_2\le18$, which by the same reasoning as above means that $18$ is an upper bound. This is a noticable improvement! While we still haven't proven that our solution is optimal, we have proven that our solution is at most $13.4\%$ below the optimal value. However, we are confident that our solution is optimal because we ran the simplex algorithm (and we're sure there were no bugs in the code)! Can we find an even tighter upper bound?</p>
+<p>Yes! We can multiply scale two of our constraints and then add them:</p>
+$$
+\begin{array}{r@{\quad}rcl}
+\frac12\times & x_1+x_2 & \le & 9 \\
+\frac12\times & 2x_1+3x_2 & \le & 25 \\
+\hline
+& \frac32x_1+2x_2 & \le & 17
+\end{array}
+$$
+<p>Thus, $17$ is an upper bound, getting us very close to $15.6$! We could keep trying different combinations to get a bound better than $17$, but it may become hard to eyeball ways to scale and combine our constraints so that they yield progressively tighter upper bounds. Instead, let's ask: what is the best possible bound we can get using this technique?</p>
+<p>We are looking for weights $y_1,y_2,y_3,y_4 \geq 0$ so that, after scaling and adding our constraints, the coefficient of $x_1$ is at least $1$ and the coefficient of $x_2$ is at least $2$:</p>
+$$
+\begin{array}{r@{\quad}rcl}
+y_1\times & -x_1+4x_2 & \le & 24 \\
+y_2\times & x_1+x_2 & \le & 9 \\
+y_3\times & 2x_1-2x_2 & \le & 11 \\
+y_4\times & 2x_1+3x_2 & \le & 25 \\
+\hline
+& (-y_1+y_2+2y_3+2y_4)x_1+(4y_1+y_2-2y_3+3y_4)x_2 & \le & 24y_1+9y_2+11y_3+25y_4
+\end{array}
+$$
+<p>Using the exact same reasoning as before, we can conclude that for any choice of $y_1,y_2,y_3,y_4 \geq 0$ such that</p>
+$$
+\begin{aligned}
+-y_1+y_2+2y_3+2y_4 &\ge 1, \\
+4y_1+y_2-2y_3+3y_4 &\ge 2,
+\end{aligned}
+$$
+<p>the right-hand side of the above inequality, $24y_1+9y_2+11y_3+25y_4$, is an upper bound on the optimal value. So we want to choose $y_1, y_2, y_3, y_4 \geq 0$ so as to minimize $24y_1+9y_2+11y_3+25y_4$ while ensuring that both the above inequalities are satisfied. This is just another linear program!</p>
+$$
+\begin{array}{rl}
+\text{minimize} & 24y_1+9y_2+11y_3+25y_4 \\
+\text{subject to} & -y_1+y_2+2y_3+2y_4\ge1, \\
+& 4y_1+y_2-2y_3+3y_4\ge2, \\
+& y_1,y_2,y_3,y_4\ge0.
+\end{array}
+$$
+<p>The optimal value of this linear program is the best possible upper bound we can find using this approach. Solving this new LP with simplex, we find that the optimal solution is $y_1^*=\frac15$, $y_2^*=\frac65$, and $y_3^*=y_4^*=0$, giving an upper bound of $24\cdot\frac15+9\cdot\frac65=15.6$. Conveniently, this is exactly equal to our original solution, proving that it is in fact optimal! We will see later that it was not a coincidence that the best upper bound we could find by combining constraints exactly matched the optimal value of the original LP.</p>
+<p>The approach we used here was not specific to this LP. Consider a general maximization LP with $n$ nonnegative variables and $m$ inequality constraints:</p>
+$$
+\begin{array}{rl}
+\text{maximize} & c_1x_1+\cdots+c_nx_n \\
+\text{subject to} & a_{11}x_1+\cdots+a_{1n}x_n\le b_1, \\
+& \vdots \\
+& a_{m1}x_1+\cdots+a_{mn}x_n\le b_m, \\
+& x_1,\ldots,x_n\ge0.
+\end{array}
+$$
+<p>Here, the $a_{ij}$, $b_i$, and $c_j$ are given coefficients. As before, we assign a nonnegative weight $y_i$ to each constraint, multiply, and add:</p>
+$$
+\begin{array}{r@{\quad}rcl}
+y_1\times & a_{11}x_1+\cdots+a_{1n}x_n & \le & b_1 \\
+y_2\times & a_{21}x_1+\cdots+a_{2n}x_n & \le & b_2 \\
+\vdots & \vdots & & \vdots \\
+y_m\times & a_{m1}x_1+\cdots+a_{mn}x_n & \le & b_m \\
+\hline
+& \displaystyle\sum_{j=1}^{n}\left(a_{1j}y_1+\cdots+a_{mj}y_m\right)x_j & \le & \displaystyle\sum_{i=1}^{m}b_i y_i
+\end{array}
+$$
+<p>If the coefficient of each $x_j$ in this sum is at least its objective coefficient $c_j$, then, because $x_j\ge0$, the right-hand side is an upper bound on the objective. To find the smallest such bound, we solve another LP:</p>
+$$
+\begin{array}{rl}
+\text{minimize} & b_1y_1+\cdots+b_my_m \\
+\text{subject to} & a_{11}y_1+\cdots+a_{m1}y_m\ge c_1, \\
+& \vdots \\
+& a_{1n}y_1+\cdots+a_{mn}y_m\ge c_n, \\
+& y_1,\ldots,y_m\ge0.
+\end{array}
+$$
+<p>This is called the <em>dual</em> LP, and the original LP is called the <em>primal</em> LP. Because of how we constructed the dual LP, we know that the objective value of any feasible dual solution provides an upper bound on the optimal value of the primal LP. This property is known as <em>weak duality</em>.</p>
+<div class="theorem-box">
+<p><strong>Theorem (Weak duality).</strong> For any feasible solution $x_1,\ldots,x_n$ to the primal LP and any feasible solution $y_1,\ldots,y_m$ to its dual LP,</p>
+$$
+c_1x_1+\cdots+c_nx_n\le b_1y_1+\cdots+b_my_m.
+$$
+<p>Consequently, if both LPs have optimal solutions, the primal maximum is at most the dual minimum.</p>
+</div>
+</section>
+</div>
+
+</div>
+
+  </body>
+</html>

@@ -148,23 +148,23 @@ This post was written for <a href="https://some.3b1b.co/">SoME4</a>. The goal of
 </ol>
 <p>Don't worry if these definitions are a little confusing right now; the best way to understand these ideas is through examples! In each of the following examples, the Markov chain has multiple recurrent classes. Observe the effect this has: even though limiting ensemble-average distributions exist, they depend on the starting state.</p>
 <hr>
-<p><strong>Example 1:</strong> In this example, the Markov chain has two recurrent classes: $\{\text{R1}\}$ and $\{\text{R2}\}$. The states R1 and R2 don't communicate with each other, and if the Markov chain is at one of these states, it stays there forever.</p>
+<p><strong>Example 1:</strong> In this example, the Markov chain has two recurrent classes: $\\{\text{R1}\\}$ and $\\{\text{R2}\\}$. The states R1 and R2 don't communicate with each other, and if the Markov chain is at one of these states, it stays there forever.</p>
 <div class="markov-demo-block">
 <markov-demo config="./demos/mult-rec-class-absorbing.json" mode="distribution" start-state-label="R2"></markov-demo>
 </div>
 <hr>
-<p><strong>Example 2:</strong> This is similar to the above example, but the Markov chain now also has a transient class, $\{\text{T1}\}$. T1 doesn't communicate with either of R1 or R2 since, while the chain can go from T1 to either state, it cannot go back: once the Markov chain leaves T1, it never returns. To see that the limiting ensemble-average distribution depends on the starting state, click on one of R1 or R2 to set a different starting state.</p>
+<p><strong>Example 2:</strong> This is similar to the above example, but the Markov chain now also has a transient class, $\\{\text{T1}\\}$. T1 doesn't communicate with either of R1 or R2 since, while the chain can go from T1 to either state, it cannot go back: once the Markov chain leaves T1, it never returns. To see that the limiting ensemble-average distribution depends on the starting state, click on one of R1 or R2 to set a different starting state.</p>
 <div class="markov-demo-block">
 <markov-demo config="./demos/mult-rec-class-transient.json" mode="distribution" size="medium" start-state-label="T1"></markov-demo>
 </div>
 <hr>
-<p><strong>Example 3:</strong> This chain has one transient class, $\{\text{T1-1}, \text{T1-2}, \text{T1-3}\}$, and three recurrent classes: $\{\text{R1-1}\}$, $\{\text{R2-1}, \text{R2-2}\}$, and $\{\text{R3-1}, \text{R3-2}, \text{R3-3}\}$.</p>
+<p><strong>Example 3:</strong> This chain has one transient class, $\\{\text{T1-1}, \text{T1-2}, \text{T1-3}\\}$, and three recurrent classes: $\\{\text{R1-1}\\}$, $\\{\text{R2-1}, \text{R2-2}\\}$, and $\\{\text{R3-1}, \text{R3-2}, \text{R3-3}\\}$.</p>
 <div class="markov-demo-block">
 <markov-demo config="./demos/mult-rec-class-complicated.json" mode="distribution" size="large" start-state-label="T1-3"></markov-demo>
 </div>
 <hr>
 <h4>Periodic Markov chains</h4>
-<p>Throughout this post, we're going to use notation like $\left(X_n\right)_{n \geq 0}$ to represent Markov chains. That is $X_0$ represents the starting state of the Markov chain, $X_1$ is the state after 1 step, and so on for all $n \geq 0$. We mention this here since we're about to need it :).</p>
+<p>Throughout this post, we're going to use notation like $\left(X\_n\right)\_{n \geq 0}$ to represent Markov chains. That is $X_0$ represents the starting state of the Markov chain, $X_1$ is the state after 1 step, and so on for all $n \geq 0$. We mention this here since we're about to need it :).</p>
 <p>We'll say that a recurrent class of a Markov chain is <em>aperiodic</em> if there exists some $N \geq 0$ such that $$\mathbf P[X_N = j ~|~ X_0 = i] &gt; 0$$ for every pair of states $i$ and $j$ in the recurrent class. Intuitively, this means that the chain doesn't get trapped in rigid cycles: after $N$ steps, you have at least some probability of being at any state in the recurrent class, regardless of where in the recurrent class you started. We say that a recurrent class is <em>periodic</em> if it is not aperiodic.</p>
 <p>We say a Markov chain is periodic if <em>any</em> of its recurrent classes are periodic, and we say it is aperiodic otherwise.</p>
 <p>Here are some examples of periodic Markov chains. Notice how, in each of these examples, a limiting ensemble-average distribution does not exist.</p>
@@ -174,12 +174,12 @@ This post was written for <a href="https://some.3b1b.co/">SoME4</a>. The goal of
 <markov-demo config="./demos/periodic-simple.json" mode="distribution" start-state-label="R1-1"></markov-demo>
 </div>
 <hr>
-<p><strong>Example 2:</strong> This chain has three transient classes: $\{\text{T1-1}\}$, $\{\text{T2-1}, \text{T2-2}\}$, and $\{\text{T3-1}, \text{T3-2}, \text{T3-3}\}$. The single recurrent class, $\{\text{R1-1}, \text{R1-2}, \text{R1-3}\}$ is periodic.</p>
+<p><strong>Example 2:</strong> This chain has three transient classes: $\\{\text{T1-1}\\}$, $\\{\text{T2-1}, \text{T2-2}\\}$, and $\\{\text{T3-1}, \text{T3-2}, \text{T3-3}\\}$. The single recurrent class, $\\{\text{R1-1}, \text{R1-2}, \text{R1-3}\\}$ is periodic.</p>
 <div class="markov-demo-block">
 <markov-demo config="./demos/periodic-complex.json" mode="distribution" size="large" start-state-label="T3-2"></markov-demo>
 </div>
 <hr>
-<p><strong>Example 3:</strong> This chain has one transient class, $\{\text{T1-1}, \text{T1-2}\}$, and two recurrent classes: $\{\text{R2-1}, \text{R2-2}, \text{R2-3}\}$ and $\{\text{R3-1}, \text{R3-2}\}$. Both the recurrent classes are periodic.</p>
+<p><strong>Example 3:</strong> This chain has one transient class, $\\{\text{T1-1}, \text{T1-2}\\}$, and two recurrent classes: $\\{\text{R2-1}, \text{R2-2}, \text{R2-3}\\}$ and $\\{\text{R3-1}, \text{R3-2}\\}$. Both the recurrent classes are periodic.</p>
 <div class="markov-demo-block">
 <markov-demo config="./demos/periodic-multiple-recurrent.json" mode="distribution" size="medium" start-state-label="T1-1"></markov-demo>
 </div>
@@ -207,14 +207,14 @@ This post was written for <a href="https://some.3b1b.co/">SoME4</a>. The goal of
 <p>The key step is to cleverly construct multiple copies of the same Markov chain that depend on each other in a useful way.<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup></p>
 <p>Start with two independent copies of the Markov chain:</p>
 <ul>
-<li>$\left(X_n\right)_{n\geq 0}$ with arbitrary initial distribution.</li>
-<li>$\color[rgb]{0.215,0.698,0.302} \left(Y_n\right)_{n\geq 0}$ with stationary initial distribution $\pi$.</li>
+<li>$\left(X\_n\right)\_{n\geq 0}$ with arbitrary initial distribution.</li>
+<li>$\color[rgb]{0.215,0.698,0.302} \left(Y\_n\right)\_{n\geq 0}$ with stationary initial distribution $\pi$.</li>
 </ul>
 <p>Note that since $\pi$ is stationary, $\color[rgb]{0.215,0.698,0.302}Y_n$ has distribution $\pi$ for all $n \geq 0$.</p>
-<p>Now comes the clever part. We construct a third chain $\color[rgb]{1,0.5725,0.1686}\left(Z_n\right)_{n\geq 0}$ that starts by following $X_n$ but switches to following $\color[rgb]{0.215,0.698,0.302}Y_n$ the first time they all meet. Specifically, let $T$ be the first time $X_n = {\color[rgb]{0.215,0.698,0.302}Y_n}$. Define $$
-{\color[rgb]{1,0.5725,0.1686}Z_n} = \begin{cases}
-X_n &amp; n &lt; T \cr
-{\color[rgb]{0.215,0.698,0.302}Y_n} &amp; n \geq T
+<p>Now comes the clever part. We construct a third chain $\color[rgb]{1,0.5725,0.1686}\left(Z\_n\right)\_{n\geq 0}$ that starts by following $X_n$ but switches to following $\color[rgb]{0.215,0.698,0.302}Y_n$ the first time they all meet. Specifically, let $T$ be the first time $X_n = {\color[rgb]{0.215,0.698,0.302}Y_n}$. Define $$
+{\color[rgb]{1,0.5725,0.1686}Z_n} = \begin{cases} 
+  X_n &amp; n &lt; T \cr
+  {\color[rgb]{0.215,0.698,0.302}Y_n} &amp; n \geq T
 \end{cases}.
 $$ The simulation below illustrates this construction. The black dot represents $X_n$, the green dot represents $\color[rgb]{0.215,0.698,0.302}Y_n$, and the orange dot represents $\color[rgb]{1,0.5725,0.1686}Z_n$. You will see that the orange dot follows the black dot until all three meet, and then switches to following the green dot. You can press &quot;Sample $Y_n$ from stationary&quot; to randomly set $\color[rgb]{0.215,0.698,0.302}Y_n$'s initial state according to the stationary distribution, or you can shift-click any state to manually set where $\color[rgb]{0.215,0.698,0.302}Y_n$ starts.</p>
 <div class="markov-demo-block">
@@ -223,7 +223,7 @@ $$ The simulation below illustrates this construction. The black dot represents 
 <p><strong>What's special about $\color[rgb]{1,0.5725,0.1686}Z_n$?</strong></p>
 <p>First, <em>if</em> we know that $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ meet eventually, then $\color[rgb]{1,0.5725,0.1686}Z_n$'s distribution will converge to the stationary distribution. This is because for large $n$, it becomes increasingly likely that $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ have already met, which would mean that $\color[rgb]{1,0.5725,0.1686}Z_n$ is at the same state as $\color[rgb]{0.215,0.698,0.302}Y_n$ (which has the stationary distribution).</p>
 <p>More rigorously, <em>if</em> $\mathbf P[n &lt; T] \to 0$, then $$
-\mathbf P[{\color[rgb]{1,0.5725,0.1686}Z_n} = j] = \mathbf P[{\color[rgb]{0.215,0.698,0.302}Y_n} = j \text{ and } n \geq T] + \mathbf P[X_n = j \text{ and } n &lt; T] \sim \mathbf P[{\color[rgb]{0.215,0.698,0.302}Y_n} = j] = \pi(j).
+  \mathbf P[{\color[rgb]{1,0.5725,0.1686}Z_n} = j] = \mathbf P[{\color[rgb]{0.215,0.698,0.302}Y_n} = j \text{ and } n \geq T] + \mathbf P[X_n = j \text{ and } n &lt; T] \sim \mathbf P[{\color[rgb]{0.215,0.698,0.302}Y_n} = j] = \pi(j).
 $$ (If you are unfamiliar with the $\sim$ notation, it means the expressions converge as $n \to \infty$.<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup>)</p>
 <p>It can be tempting to say that in a finite Markov chain, it's obvious that $X_n$ and $\color[rgb]{0.215,0.698,0.302}Y_n$ meet <em>eventually</em>, but this is not always true. Let's see what can go wrong by revisiting our earlier examples of chains where the ensemble-average distribution does not converge.</p>
 <hr>
@@ -306,7 +306,7 @@ $$ after $N$ steps. Thus, the probability of them eventually meeting is at least
 <p>Why does this mean the time-average distribution converges? In the limit, the initial phase becomes negligible because it always has finite length. So the limiting fraction of time spent at each state will be determined entirely by the cycling phase. Since we have i.i.d. cycles, the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law">strong law of large numbers</a> tells us that the average behavior across cycles will converge to the expected behavior of a single cycle.</p>
 <p>To make that last claim precise:</p>
 <p>Let $C^j$ be the length of an excursion starting and ending at state $j$, and let $V^j(i)$ be the number of visits to state $i$ during that excursion. (Here, the excursion begins after initially leaving state $j$ so as to not double count.) Let $\big(C^j_1, V^j_1(i)\big), \big(C^j_2, V^j_2(i)\big), \dots$ be i.i.d. copies of $\big(C^j, V^j(i)\big)$. By the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law">SLLN</a>, the following holds with probability $1$:
-$$\frac{V^j_1(i) + \cdots + V^j_k(i)}{k} \to \mathbf E[V^j(i)] \quad \text{and} \quad \frac{C^j_1 + \cdots + C^j_k}{k} \to \mathbf E[C^j].$$ However, we want the fraction of time spent at state $i$, which is: $$\frac{\text{total visits to $i$}}{\text{total time}} = \frac{V^j_1(i) + V^j_2(i) + V^j_3(i) + \cdots}{C^j_1 + C^j_2 + C^j_3 + \cdots}$$ Intuitively, since $C^j_1 + \cdots + C^j_k \approx k\mathbf E[C^j]$ for large $k$, we get: $$\frac{V^j_1(i) + \cdots + V^j_k(i)}{C^j_1 + \cdots + C^j_k} \approx \frac{V^j_1(i) + \cdots + V^j_k(i)}{k\mathbf E[C^j]} \to \frac{\mathbf E[V^j(i)]}{\mathbf E[C^j]}.$$ This final convergence is rigorously established by the <a href="https://en.wikipedia.org/wiki/Renewal_theory#Elementary_renewal_theorem_for_renewal_reward_processes">Renewal-Reward theorem</a>, which handles the ratio of two sums that each satisfy the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law">SLLN</a>, even when the corresponding terms in the two sums are dependent (as $C^j_k$ and $V^j_k(i)$ are here).</p>
+$$\frac{V^j_1(i) + \cdots + V^j_k(i)}{k} \to \mathbf E[V^j(i)] \quad \text{and} \quad \frac{C^j_1 + \cdots + C^j_k}{k} \to \mathbf E[C^j].$$ However, we want the fraction of time spent at state $i$, which is: $$\frac{\text{total visits to $i$}}{\text{total time}} = \frac{V^j_1(i) + V^j_2(i) + V^j_3(i) + \cdots}{C^j_1 + C^j_2 + C^j_3 + \cdots}$$ Intuitively, since $C^j_1 + \cdots + C^j_k \approx k\mathbf E[C^j]$ for large $k$, we get: $$\frac{V^j_1(i) + \cdots + V^j_k(i)}{C^j_1 + \cdots + C^j_k} \approx \frac{V^j_1(i) + \cdots + V^j_k(i)}{k\mathbf E[C^j]} \to \frac{\mathbf E[V^j(i)]}{\mathbf E[C^j]}.$$ This final convergence is rigorously established by the [Renewal-Reward theorem](https://en.wikipedia.org/wiki/Renewal_theory#Elementary_renewal_theorem_for_renewal_reward_processes), which handles the ratio of two sums that each satisfy the [SLLN](https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law), even when the corresponding terms in the two sums are dependent (as $C^j_k$ and $V^j_k(i)$ are here).</p>
 <p>Putting this all together, we get the following convergence result.</p>
 <div class="theorem">
     <div class="theorem-title">Theorem 2</div>
