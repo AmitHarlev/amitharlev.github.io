@@ -48,12 +48,12 @@
 <p>Imagine you have a solution to the following LP and you want to prove to your boss that it is optimal.</p>
 $$
 \begin{array}{rl}
-\text{maximize} & x_1+2x_2 \\
-\text{subject to} & -x_1+4x_2\le24, \\
-& x_1+x_2\le9, \\
-& 2x_1-2x_2\le11, \\
-& 2x_1+3x_2\le28, \\
-& x_1,x_2\ge0.
+\text{maximize} &amp; x_1+2x_2 \\
+\text{subject to} &amp; -x_1+4x_2\le24, \\
+&amp; x_1+x_2\le9, \\
+&amp; 2x_1-2x_2\le11, \\
+&amp; 2x_1+3x_2\le28, \\
+&amp; x_1,x_2\ge0.
 \end{array}
 $$
 <p>You know the optimal solution is $x_1^* = 2.4$ and $x_2^* = 6.6$ because you ran the simplex algorithm. However, your boss is worried you had a bug in your code and wants a quick and easy way to certify that this solution is actually optimal. How might you do this?</p>
@@ -63,70 +63,70 @@ $$
 <p>Yes! We can scale two of our constraints and then add them:</p>
 $$
 \begin{array}{r@{\quad}rcl}
-\frac14\times & -x_1+4x_2 & \le & 24 \\
-\frac54\times & x_1+x_2 & \le & 9 \\
+\frac14\times &amp; -x_1+4x_2 &amp; \le &amp; 24 \\
+\frac54\times &amp; x_1+x_2 &amp; \le &amp; 9 \\
 \hline
-& x_1+\frac94x_2 & \le & 17.25
+&amp; x_1+\frac94x_2 &amp; \le &amp; 17.25
 \end{array}
 $$
 <p>Since $x_2\ge0$, we have $x_1+2x_2\le x_1+\frac94x_2\le17.25$. Thus, $17.25$ is an upper bound, getting us very close to $15.6$! We could keep trying different combinations to get a bound better than $17.25$, but it may become hard to eyeball ways to scale and combine our constraints so that they yield progressively tighter upper bounds. Instead, let's ask: what is the best possible bound we can get using this technique?</p>
 <p>We are looking for weights $y_1,y_2,y_3,y_4 \geq 0$ so that, after scaling and adding our constraints, the coefficient of $x_1$ is at least $1$ and the coefficient of $x_2$ is at least $2$:</p>
 $$
 \begin{array}{r@{\quad}rcl}
-y_1\times & -x_1+4x_2 & \le & 24 \\
-y_2\times & x_1+x_2 & \le & 9 \\
-y_3\times & 2x_1-2x_2 & \le & 11 \\
-y_4\times & 2x_1+3x_2 & \le & 28 \\
+y_1\times &amp; -x_1+4x_2 &amp; \le &amp; 24 \\
+y_2\times &amp; x_1+x_2 &amp; \le &amp; 9 \\
+y_3\times &amp; 2x_1-2x_2 &amp; \le &amp; 11 \\
+y_4\times &amp; 2x_1+3x_2 &amp; \le &amp; 28 \\
 \hline
-& (-y_1+y_2+2y_3+2y_4)x_1+(4y_1+y_2-2y_3+3y_4)x_2 & \le & 24y_1+9y_2+11y_3+28y_4
+&amp; (-y_1+y_2+2y_3+2y_4)x_1+(4y_1+y_2-2y_3+3y_4)x_2 &amp; \le &amp; 24y_1+9y_2+11y_3+28y_4
 \end{array}
 $$
 <p>Using the exact same reasoning as before, we can conclude that for any choice of $y_1,y_2,y_3,y_4 \geq 0$ such that</p>
 $$
 \begin{aligned}
--y_1+y_2+2y_3+2y_4 &\ge 1, \\
-4y_1+y_2-2y_3+3y_4 &\ge 2,
+-y_1+y_2+2y_3+2y_4 &amp;\ge 1, \\
+4y_1+y_2-2y_3+3y_4 &amp;\ge 2,
 \end{aligned}
 $$
 <p>the right-hand side of the above inequality, $24y_1+9y_2+11y_3+28y_4$, is an upper bound on the optimal value. So we want to choose $y_1, y_2, y_3, y_4 \geq 0$ so as to minimize $24y_1+9y_2+11y_3+28y_4$ while ensuring that both the above inequalities are satisfied. This is just another linear program!</p>
 $$
 \begin{array}{rl}
-\text{minimize} & 24y_1+9y_2+11y_3+28y_4 \\
-\text{subject to} & -y_1+y_2+2y_3+2y_4\ge1, \\
-& 4y_1+y_2-2y_3+3y_4\ge2, \\
-& y_1,y_2,y_3,y_4\ge0.
+\text{minimize} &amp; 24y_1+9y_2+11y_3+28y_4 \\
+\text{subject to} &amp; -y_1+y_2+2y_3+2y_4\ge1, \\
+&amp; 4y_1+y_2-2y_3+3y_4\ge2, \\
+&amp; y_1,y_2,y_3,y_4\ge0.
 \end{array}
 $$
 <p>The optimal value of this linear program is the best possible upper bound we can find using this approach. Solving this new LP with simplex, we find that the optimal solution is $y_1^*=\frac15$, $y_2^*=\frac65$, and $y_3^*=y_4^*=0$, giving an upper bound of $24\cdot\frac15+9\cdot\frac65=15.6$. Conveniently, this is exactly equal to our original solution, proving that it is in fact optimal! We will see later that it was not a coincidence that the best upper bound we could find by combining constraints exactly matched the optimal value of the original LP.</p>
 <p>The approach we used here was not specific to this LP. Consider a general maximization LP with $n$ nonnegative variables and $m$ inequality constraints:</p>
 $$
 \begin{array}{rl}
-\text{maximize} & c_1x_1+\cdots+c_nx_n \\
-\text{subject to} & a_{11}x_1+\cdots+a_{1n}x_n\le b_1, \\
-& \vdots \\
-& a_{m1}x_1+\cdots+a_{mn}x_n\le b_m, \\
-& x_1,\ldots,x_n\ge0.
+\text{maximize} &amp; c_1x_1+\cdots+c_nx_n \\
+\text{subject to} &amp; a_{11}x_1+\cdots+a_{1n}x_n\le b_1, \\
+&amp; \vdots \\
+&amp; a_{m1}x_1+\cdots+a_{mn}x_n\le b_m, \\
+&amp; x_1,\ldots,x_n\ge0.
 \end{array}
 $$
 <p>Here, the $a_{ij}$, $b_i$, and $c_j$ are given coefficients. As before, we assign a nonnegative weight $y_i$ to each constraint, multiply, and add:</p>
 $$
 \begin{array}{r@{\quad}rcl}
-y_1\times & a_{11}x_1+\cdots+a_{1n}x_n & \le & b_1 \\
-y_2\times & a_{21}x_1+\cdots+a_{2n}x_n & \le & b_2 \\
-\vdots & \vdots & & \vdots \\
-y_m\times & a_{m1}x_1+\cdots+a_{mn}x_n & \le & b_m \\
+y_1\times &amp; a_{11}x_1+\cdots+a_{1n}x_n &amp; \le &amp; b_1 \\
+y_2\times &amp; a_{21}x_1+\cdots+a_{2n}x_n &amp; \le &amp; b_2 \\
+\vdots &amp; \vdots &amp; &amp; \vdots \\
+y_m\times &amp; a_{m1}x_1+\cdots+a_{mn}x_n &amp; \le &amp; b_m \\
 \hline
-& \displaystyle\sum_{j=1}^{n}\left(a_{1j}y_1+\cdots+a_{mj}y_m\right)x_j & \le & \displaystyle\sum_{i=1}^{m}b_i y_i
+&amp; \displaystyle\sum_{j=1}^{n}\left(a_{1j}y_1+\cdots+a_{mj}y_m\right)x_j &amp; \le &amp; \displaystyle\sum_{i=1}^{m}b_i y_i
 \end{array}
 $$
 <p>If the coefficient of each $x_j$ in this sum is at least its objective coefficient $c_j$, then, because $x_j\ge0$, the right-hand side is an upper bound on the objective. To find the smallest such bound, we solve another LP:</p>
 $$
 \begin{array}{rl}
-\text{minimize} & b_1y_1+\cdots+b_my_m \\
-\text{subject to} & a_{11}y_1+\cdots+a_{m1}y_m\ge c_1, \\
-& \vdots \\
-& a_{1n}y_1+\cdots+a_{mn}y_m\ge c_n, \\
-& y_1,\ldots,y_m\ge0.
+\text{minimize} &amp; b_1y_1+\cdots+b_my_m \\
+\text{subject to} &amp; a_{11}y_1+\cdots+a_{m1}y_m\ge c_1, \\
+&amp; \vdots \\
+&amp; a_{1n}y_1+\cdots+a_{mn}y_m\ge c_n, \\
+&amp; y_1,\ldots,y_m\ge0.
 \end{array}
 $$
 <p>This is called the <em>dual</em> LP, and the original LP is called the <em>primal</em> LP. Because of how we constructed the dual LP, we know that the objective value of any feasible dual solution provides an upper bound on the optimal value of the primal LP. This property is known as <em>weak duality</em>.</p>
@@ -165,12 +165,12 @@ $$
 <p>where $y_i \geq 0$ for all $i = 1,\ldots,m$. Equivalently, we can also write this as</p>
 $$
 \begin{array}{r@{\quad}rcl}
-y_1\times & a_{11}x_1+\cdots+a_{1n}x_n & \le & b_1 \\
-y_2\times & a_{21}x_1+\cdots+a_{2n}x_n & \le & b_2 \\
-\vdots & \vdots & & \vdots \\
-y_m\times & a_{m1}x_1+\cdots+a_{mn}x_n & \le & b_m \\
+y_1\times &amp; a_{11}x_1+\cdots+a_{1n}x_n &amp; \le &amp; b_1 \\
+y_2\times &amp; a_{21}x_1+\cdots+a_{2n}x_n &amp; \le &amp; b_2 \\
+\vdots &amp; \vdots &amp; &amp; \vdots \\
+y_m\times &amp; a_{m1}x_1+\cdots+a_{mn}x_n &amp; \le &amp; b_m \\
 \hline
-& c_1x_1+\cdots+c_nx_n & \le & \displaystyle\sum_{i=1}^m b_i y_i.
+&amp; c_1x_1+\cdots+c_nx_n &amp; \le &amp; \displaystyle\sum_{i=1}^m b_i y_i.
 \end{array}
 $$
 <p>Note that this tells us that $(y_1,\ldots,y_m)$ is a dual feasible solution: the weights are nonnegative, and the combined coefficient of each $x_j$ is exactly $c_j$, so all the dual constraints are satisfied with equality. Thus, $\sum_{i=1}^m b_i y_i$ is an upper bound on the primal optimal solution. If we can show that this must equal the primal optimal value we will have shown that strong duality holds.</p>
@@ -185,12 +185,12 @@ $$
 <p>Thus, plugging $(x_1^\ast,\ldots,x_n^\ast)$ into the earlier display gets us</p>
 $$
 \begin{array}{r@{\quad}rcl}
-y_1\times & a_{11}x_1^\ast+\cdots+a_{1n}x_n^\ast & = & b_1 \\
-y_2\times & a_{21}x_1^\ast+\cdots+a_{2n}x_n^\ast & = & b_2 \\
-\vdots & \vdots & & \vdots \\
-y_m\times & a_{m1}x_1^\ast+\cdots+a_{mn}x_n^\ast & = & b_m \\
+y_1\times &amp; a_{11}x_1^\ast+\cdots+a_{1n}x_n^\ast &amp; = &amp; b_1 \\
+y_2\times &amp; a_{21}x_1^\ast+\cdots+a_{2n}x_n^\ast &amp; = &amp; b_2 \\
+\vdots &amp; \vdots &amp; &amp; \vdots \\
+y_m\times &amp; a_{m1}x_1^\ast+\cdots+a_{mn}x_n^\ast &amp; = &amp; b_m \\
 \hline
-& c_1x_1^\ast+\cdots+c_nx_n^\ast & = & \displaystyle\sum_{i=1}^m b_i y_i
+&amp; c_1x_1^\ast+\cdots+c_nx_n^\ast &amp; = &amp; \displaystyle\sum_{i=1}^m b_i y_i
 \end{array}
 $$
 <p>and showing that strong duality holds.</p>
@@ -200,10 +200,10 @@ $$
 <p><strong>Lemma (Complementary slackness).</strong> Let $x_1^*,\ldots,x_n^*$ be primal feasible and $y_1,\ldots,y_m$ be dual feasible. These solutions are both optimal if and only if</p>
 $$
 \begin{aligned}
-y_i\left(b_i-\sum_{j=1}^n a_{ij}x_j^*\right)&=0
-&&\text{for every }i=1,\ldots,m,\\
-x_j^*\left(\sum_{i=1}^m a_{ij}y_i-c_j\right)&=0
-&&\text{for every }j=1,\ldots,n.
+y_i\left(b_i-\sum_{j=1}^n a_{ij}x_j^*\right)&amp;=0
+&amp;&amp;\text{for every }i=1,\ldots,m,\\
+x_j^*\left(\sum_{i=1}^m a_{ij}y_i-c_j\right)&amp;=0
+&amp;&amp;\text{for every }j=1,\ldots,n.
 \end{aligned}
 $$
 <p>In words, a positive dual weight requires the corresponding primal constraint to be tight, and a positive primal variable requires the corresponding dual constraint to be tight.</p>
@@ -244,9 +244,9 @@ $$
 <p>There exist $y_1,\ldots,y_m\ge0$ satisfying</p>
 $$
    \begin{aligned}
-   a_{1j}y_1+\cdots+a_{mj}y_m&\ge0
-   &&\text{for every }j=1,\ldots,n,\\
-   b_1y_1+\cdots+b_my_m&<0.
+   a_{1j}y_1+\cdots+a_{mj}y_m&amp;\ge0
+   &amp;&amp;\text{for every }j=1,\ldots,n,\\
+   b_1y_1+\cdots+b_my_m&amp;&lt;0.
    \end{aligned}
    $$
 </li>
@@ -255,7 +255,7 @@ $$
 <p>Why does the second alternative certify infeasibility? Multiply constraint $i$ by $y_i$ and add. Any feasible solution would have to satisfy</p>
 $$
 0\le\sum_{j=1}^{n}\left(a_{1j}y_1+\cdots+a_{mj}y_m\right)x_j
-\le b_1y_1+\cdots+b_my_m<0,
+\le b_1y_1+\cdots+b_my_m&lt;0,
 $$
 <p>a contradiction. The first inequality follows because both the combined coefficients and the variables are nonnegative. The last inequality is precisely what our certificate requires.</p>
 <p>The remarkable part is that such a certificate always exists when the system is infeasible. Just as dual variables can certify optimality, nonnegative weights can certify that no feasible solution exists. Checking the certificate only requires multiplying and adding the given coefficients.</p>
