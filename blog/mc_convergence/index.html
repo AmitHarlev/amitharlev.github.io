@@ -7,7 +7,7 @@
     
 
     
-        <link rel="stylesheet" href="/styles/blog.css" />
+        <link rel="stylesheet" href="/styles/blog.css?v=2" />
 
         <script>
         window.MathJax = {
@@ -32,9 +32,11 @@
 <div class="container">
   
     <h1 class="title">
-      When do Markov chains converge?<br>
-      <span class="subtitle"></span>
+      When do Markov chains converge?
     </h1>
+    
+      <p class="post-date"><time datetime="2025-08-14">August 14, 2025</time></p>
+    
   
 
   
@@ -50,7 +52,7 @@
 </style>
 <blockquote>
 <p><em>Foreword:</em>
-This post was written for <a href="https://some.3b1b.co/">SoME4</a>. The goal of this post is to present some standard Markov chain concepts, but make them genuinely intuitive through interactive visualizations that let you explore the ideas hands-on. This post is written for undergraduates who have some probability background. You'll get the most out of this if you're familiar with basic Markov chain concepts (states, transition matrices, etc.), but even if you're not, the interactive elements should help fill in gaps, and a quick Google search or ChatGPT query can clarify anything unfamiliar.</p>
+This post was written for <a href="https://some.3b1b.co/archive?category=non-video&amp;year=2025&amp;page=1">SoME (2025)</a>. The goal of this post is to present some standard Markov chain concepts, but make them genuinely intuitive through interactive visualizations that let you explore the ideas hands-on. This post is written for undergraduates who have some probability background. You'll get the most out of this if you're familiar with basic Markov chain concepts (states, transition matrices, etc.), but even if you're not, the interactive elements should help fill in gaps, and a quick Google search or ChatGPT query can clarify anything unfamiliar.</p>
 </blockquote>
 <p>At the start of the 20th century, it was commonly believed that the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law">strong law of large numbers</a> <em>only</em> applied to systems with independent events (think repeatedly flipping a coin or rolling a die). However, Russian mathematician Andrey Markov believed that even in systems where events influence each other, the system would converge to predictable averages over time, so long as the system satisfied certain criteria.<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
 <p>For those unfamiliar with the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers#Strong_law">strong law of large numbers</a> (SLLN), here is a simple example of what it tells us: if you flip a fair coin repeatedly, the fraction of flips that land on heads will eventually converge to $1/2$, the probability of getting heads for an arbitrary flip. It relates the <em>limiting fraction of times</em> an event occurs to the probability of it happening for an arbitrary independent trial. Pretty intuitive, right?</p>

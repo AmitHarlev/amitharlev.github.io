@@ -1,4 +1,5 @@
-import { FORCE, RADIUS, STEP, WALLS, convexObjectiveForce, createBall, forceForObjective, isFeasible, stepBall } from './physics.mjs';
+import { UNBOUNDED_WALLS, unboundedViewportPolygon, createUnboundedBall, isUnboundedFeasible, stepUnboundedBall } from './unbounded-physics.mjs';
+import { FORCE, RADIUS, STEP, WALLS, convexObjectiveForce, createBall, forceForObjective, isFeasible, polygon, stepBall } from './physics.mjs';
 import { CURVE, CURVE_LINES, REGION_POINTS, createCurvedBall, isCurvedFeasible, stepCurvedBall } from './curved-physics.mjs';
 
 const VIEW = { left: -1.15, right: 10.05, bottom: -1.15, top: 10.05 };
@@ -15,7 +16,6 @@ class ConvexDualityDemo extends HTMLElement {
     this.accumulator = 0;
     this.frame = null;
     this.visible = true;
-    this.showForces = false;
     this.movingDots = true;
     this.force = FORCE;
     this.forceAt = () => this.force;
@@ -24,13 +24,17 @@ class ConvexDualityDemo extends HTMLElement {
 
   connectedCallback() {
     this.curved = this.getAttribute('region') === 'curved';
-    this.createBall = this.curved ? createCurvedBall : createBall;
-    this.isFeasible = this.curved ? isCurvedFeasible : isFeasible;
-    this.stepBall = this.curved ? stepCurvedBall : stepBall;
+    this.unbounded = this.getAttribute('region') === 'unbounded';
+    this.regionPoints = this.unbounded ? unboundedViewportPolygon(VIEW) : this.curved ? REGION_POINTS : polygon();
+    this.createBall = this.unbounded ? createUnboundedBall : this.curved ? createCurvedBall : createBall;
+    this.isFeasible = this.unbounded ? isUnboundedFeasible : this.curved ? isCurvedFeasible : isFeasible;
+    this.stepBall = this.unbounded ? stepUnboundedBall : this.curved ? stepCurvedBall : stepBall;
+    this.restitution = this.hasAttribute("inelastic") ? 0 : 0.30;
     const upward = Number(this.getAttribute('objective-y'));
     this.force = forceForObjective(upward);
     this.nonlinear = this.getAttribute('objective') === 'convex';
     this.forceAt = this.nonlinear ? convexObjectiveForce : () => this.force;
+    this.hasDamping = this.curved || this.nonlinear;
     // Retain the static-stroke experiment as an optional background.
     this.fixedArrows = this.getAttribute('background') === 'fixed-arrows';
     this.movingDots = !this.fixedArrows && this.getAttribute('background') !== 'static-strokes';
@@ -39,52 +43,33 @@ class ConvexDualityDemo extends HTMLElement {
         :host { display: block; }
         .box { position: relative; overflow: hidden; border: 1px solid #dce2e3; border-radius: 14px; background: transparent; }
         canvas { display: block; width: 100%; aspect-ratio: 1; touch-action: pan-y; outline: none; }
-        .box:focus-within { outline: 2px solid #338a7d; outline-offset: 4px; }
+        .box:has(canvas:focus-visible) { outline: 2px solid #338a7d; outline-offset: 4px; }
         .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-        .toolbar { position: absolute; top: 14px; right: 14px; font: 14px/1.4 system-ui, sans-serif; color: #4f5d64; }
-        .forces-toggle { min-height: 42px; padding: 0 17px; border: 1px solid #cfd7da; border-radius: 9px; background: #fff; color: #4f5d64; font: inherit; font-weight: 500; cursor: pointer; box-shadow: 0 2px 3px #172b3510; transition: background 150ms, box-shadow 150ms, border-color 150ms, transform 150ms; }
-        .forces-toggle:hover { background: #f5f7f7; border-color: #aab8bd; }
-        .forces-toggle[aria-pressed="true"] { background: #e3e9ec; color: #202e35; border-color: #9aadb7; box-shadow: inset 0 2px 4px #172b3526; transform: translateY(1px); }
-        .forces-toggle:active { box-shadow: inset 0 2px 4px #172b3526; transform: translateY(1px); }
-        .forces-toggle:focus-visible { outline: 2px solid #338a7d; outline-offset: 3px; }
-        .legend { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 16px; padding: 10px 4px 0; font: 14px/1.4 system-ui, sans-serif; color: #4f5d64; }
-        .legend[hidden] { display: none; }
+        .legend { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px 24px; padding: 12px 4px 0; font: 17px/1.4 system-ui, sans-serif; color: #4f5d64; }
         .constraints { padding: 10px 4px 0; color: #4f5d64; font: 14px/1.5 system-ui, sans-serif; }
         .constraints .equations { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 4px; }
         .constraints .equations span { white-space: nowrap; }
-        .legend span { display: inline-flex; align-items: center; gap: 6px; }
-        .legend i { width: 17px; border-top: 2px solid var(--color); position: relative; }
-        .legend i::after { content: ''; position: absolute; right: 0; top: -4.5px; width: 8px; height: 7px; background: var(--color); clip-path: polygon(100% 50%, 0 0, 25% 50%, 0 100%); }
-        @media (max-width: 400px) { .toolbar { top: 10px; right: 10px; } .forces-toggle { min-height: 38px; padding: 0 14px; } }
-        @media (prefers-reduced-motion: reduce) { .forces-toggle { transition: none; } }
+        .legend span { display: inline-flex; align-items: center; gap: 9px; }
+        .legend svg { display: block; width: 28px; height: 16px; flex: 0 0 28px; fill: var(--color); }
       </style>
       <div class="box">
         <canvas tabindex="0" role="group" aria-label="Interactive constrained ball simulation" aria-describedby="instructions"></canvas>
-        <div class="toolbar">
-          <button class="forces-toggle" type="button" aria-pressed="${this.showForces}">Show forces</button>
-        </div>
+      </div>
+      <div class="legend">
+        <span><svg style="--color:#bb701d" viewBox="0 0 28 16" aria-hidden="true"><path d="M0 6.25H22.24V9.75H0Z M28 8Q24.4 9.28 20 13.376Q22.24 8 20 2.624Q24.4 6.72 28 8Z"/></svg>Gravity (objective)</span>
+        <span><svg style="--color:#2878bc" viewBox="0 0 28 16" aria-hidden="true"><path d="M0 6.25H22.24V9.75H0Z M28 8Q24.4 9.28 20 13.376Q22.24 8 20 2.624Q24.4 6.72 28 8Z"/></svg>Normal (constraints)</span>
+        ${this.hasDamping ? '<span><svg style="--color:#c43d3d" viewBox="0 0 28 16" aria-hidden="true"><path d="M0 6.25H22.24V9.75H0Z M28 8Q24.4 9.28 20 13.376Q22.24 8 20 2.624Q24.4 6.72 28 8Z"/></svg>Damping</span>' : ''}
       </div>
       ${this.curved ? `<div class="constraints">Shaded region: the intersection, with x<sub>1</sub>, x<sub>2</sub> ≥ 0.
         <div class="equations"><span>x<sub>2</sub> ≤ 0.3x<sub>1</sub> + 4.75</span><span>x<sub>2</sub> ≥ 2.9x<sub>1</sub> − 17.65</span><span>(x<sub>1</sub> − 3.2)² + (x<sub>2</sub> − 2.8)² ≤ 4.6²</span></div>
       </div>` : ''}
-      <div class="legend" ${!this.showForces ? 'hidden' : ''}>
-        <span><i style="--color:#bb701d"></i>Gravity (objective)</span>
-        <span><i style="--color:#2878bc"></i>Normal (constraints)</span>
-        <span><i style="--color:#c43d3d"></i>Damping</span>
-      </div>
-      <p id="instructions" class="sr-only">Click or tap inside the region bounded by the axes and constraints to release a ball at rest, replacing the previous ball. ${this.nonlinear ? 'The force follows the local gradient of a convex quadratic objective, changing direction and strength with position.' : 'A constant force pushes up and right.'} Arrow keys move a placement point; Enter or Space releases a ball. Escape clears the ball. Enable forces to show the objective force in orange and normal forces in blue. Normal forces are briefly averaged to make impacts visible; all arrows share a common scale.</p>
+      <p id="instructions" class="sr-only">Click or tap inside the region bounded by the axes and constraints to release a ball at rest, replacing the previous ball. ${this.nonlinear ? 'The force follows the local gradient of a convex quadratic objective, changing direction and strength with position.' : 'A constant force pushes up and right.'} Arrow keys move a placement point; Enter or Space releases a ball. Escape clears the ball. Force arrows show the objective force in orange and normal forces in blue. Normal forces are briefly averaged to make impacts visible; all arrows share a common scale.</p>
       <span class="sr-only" role="status" aria-live="polite"></span>`;
     this.canvas = this.shadowRoot.querySelector('canvas');
     this.ctx = this.canvas.getContext('2d');
     this.motion = matchMedia('(prefers-reduced-motion: reduce)');
     this.abort = new AbortController();
     const options = { signal: this.abort.signal };
-    this.shadowRoot.querySelector('.forces-toggle').addEventListener('click', e => {
-      this.showForces = !this.showForces;
-      e.currentTarget.setAttribute('aria-pressed', String(this.showForces));
-      this.shadowRoot.querySelector('.legend').hidden = !this.showForces;
-      this.draw();
-    }, options);
     this.canvas.addEventListener('click', e => {
       const p = this.fromPointer(e);
       this.addBall(p.x, p.y);
@@ -195,11 +180,16 @@ class ConvexDualityDemo extends HTMLElement {
     this.lastTime = now;
     while (this.accumulator >= STEP) {
       for (const ball of this.balls) {
-        this.stepBall(ball, STEP, this.forceAt(ball.x, ball.y));
-        // Average collision impulses over 80ms so a brief impact can be seen.
+        this.stepBall(ball, STEP, this.forceAt(ball.x, ball.y), this.hasDamping ? undefined : 0, this.restitution);
+        // Smooth active reactions, but never retain a force after it stops acting.
         const blend = 1 - Math.exp(-STEP / 0.08);
         const displayed = [...ball.forces.contacts, ball.forces.damping];
         displayed.forEach((force, i) => {
+          if (i < ball.forces.contacts.length && force.x === 0 && force.y === 0) {
+            ball.displayForces[i].x = 0;
+            ball.displayForces[i].y = 0;
+            return;
+          }
           ball.displayForces[i].x += blend * (force.x - ball.displayForces[i].x);
           ball.displayForces[i].y += blend * (force.y - ball.displayForces[i].y);
         });
@@ -243,20 +233,20 @@ class ConvexDualityDemo extends HTMLElement {
     c.fillStyle = '#4f5d64';
     c.textAlign = 'left';
     c.textBaseline = 'alphabetic';
-    c.font = 'italic 20px Georgia, serif';
+    c.font = 'italic 28px Georgia, serif';
     const baseWidth = c.measureText('x').width;
-    c.font = '12px Georgia, serif';
+    c.font = '16px Georgia, serif';
     const subWidth = c.measureText(String(index)).width;
     const left = align === 'right' ? x - baseWidth - subWidth : x;
-    c.font = 'italic 20px Georgia, serif';
+    c.font = 'italic 28px Georgia, serif';
     c.fillText('x', left, y);
     // Draw the smaller, upright index explicitly below the main baseline.
-    c.font = '12px Georgia, serif';
-    c.fillText(String(index), left + baseWidth, y + 5);
+    c.font = '16px Georgia, serif';
+    c.fillText(String(index), left + baseWidth, y + 6);
     c.restore();
   }
 
-  drawLatexArrow(startX, startY, endX, endY, head, addHeadBeyondShaft = false) {
+  drawLatexArrow(startX, startY, endX, endY, head, addHeadBeyondShaft = false, headWidth = 1) {
     const c = this.ctx;
     const length = Math.hypot(endX - startX, endY - startY);
     const angle = Math.atan2(endY - startY, endX - startX);
@@ -274,9 +264,9 @@ class ConvexDualityDemo extends HTMLElement {
       c.rect(-totalLength, -c.lineWidth / 2, totalLength - head * 0.72, c.lineWidth);
     }
     c.moveTo(0, 0);
-    c.quadraticCurveTo(-head * 0.45, head * 0.1, -head, head * 0.42);
-    c.quadraticCurveTo(-head * 0.72, 0, -head, -head * 0.42);
-    c.quadraticCurveTo(-head * 0.45, -head * 0.1, 0, 0);
+    c.quadraticCurveTo(-head * 0.45, head * 0.1 * headWidth, -head, head * 0.42 * headWidth);
+    c.quadraticCurveTo(-head * 0.72, 0, -head, -head * 0.42 * headWidth);
+    c.quadraticCurveTo(-head * 0.45, -head * 0.1 * headWidth, 0, 0);
     c.closePath();
     c.fill();
     c.restore();
@@ -290,12 +280,13 @@ class ConvexDualityDemo extends HTMLElement {
     const factor = this.nonlinear ? Math.min(0.35, 2.4 / largest) : 2 / largest;
     const [x, y] = this.screen(ball.x, ball.y);
     c.save();
-    c.lineWidth = 2.3;
+    c.lineWidth = 3.5;
     c.lineCap = 'round';
     vectors.forEach((v, i) => {
       const isDamping = i === vectors.length - 1;
       // Suppress the damping indicator only when motion is visually negligible.
       // Objective and normal forces remain visible at equilibrium.
+      if (isDamping && !this.hasDamping) return;
       if (isDamping && Math.hypot(ball.vx, ball.vy) * this.scale < 1) return;
       const dx = v.x * factor * this.scale, dy = -v.y * factor * this.scale;
       const length = Math.hypot(dx, dy);
@@ -308,7 +299,7 @@ class ConvexDualityDemo extends HTMLElement {
       const startX = x + offset * ux, startY = y + offset * uy;
       const endX = startX + dx, endY = startY + dy;
       c.strokeStyle = i === 0 ? '#bb701d' : i === vectors.length - 1 ? '#c43d3d' : '#2878bc';
-      this.drawLatexArrow(startX, startY, endX, endY, head, true);
+      this.drawLatexArrow(startX, startY, endX, endY, head, true, 1.6);
     });
     c.restore();
   }
@@ -318,6 +309,15 @@ class ConvexDualityDemo extends HTMLElement {
     const c = this.ctx;
     c.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     c.clearRect(0, 0, this.width, this.height);
+    // Tint the exact feasible intersection behind the field and boundaries.
+    c.save();
+    c.beginPath();
+    c.moveTo(...this.screen(this.regionPoints[0].x, this.regionPoints[0].y));
+    for (const point of this.regionPoints.slice(1)) c.lineTo(...this.screen(point.x, point.y));
+    c.closePath();
+    c.fillStyle = 'rgba(92, 163, 220, 0.13)';
+    c.fill();
+    c.restore();
     c.save();
     c.fillStyle = 'rgba(104, 116, 122, 0.23)';
     c.strokeStyle = 'rgba(104, 116, 122, 0.23)';
@@ -352,7 +352,7 @@ class ConvexDualityDemo extends HTMLElement {
 
     c.save();
     c.beginPath();
-    c.rect(15, 15, Math.max(0, this.width - 30), Math.max(0, this.height - 30));
+    c.rect(0, 0, this.width, this.height);
     c.clip();
     c.lineWidth = 2;
     c.strokeStyle = '#4f5d64';
@@ -361,8 +361,6 @@ class ConvexDualityDemo extends HTMLElement {
       c.moveTo(...this.screen(REGION_POINTS[0].x, REGION_POINTS[0].y));
       for (const p of REGION_POINTS.slice(1)) c.lineTo(...this.screen(p.x, p.y));
       c.closePath();
-      c.fillStyle = 'rgba(70, 107, 119, 0.08)';
-      c.fill();
       c.stroke();
       // Extend every constraint beyond the active boundary of the intersection.
       c.lineWidth = 1.3;
@@ -374,7 +372,7 @@ class ConvexDualityDemo extends HTMLElement {
       for (const wall of CURVE_LINES) {
         this.line(VIEW.left, (wall.b - wall.x * VIEW.left) / wall.y, VIEW.right, (wall.b - wall.x * VIEW.right) / wall.y);
       }
-    } else for (const wall of WALLS.slice(2)) {
+    } else for (const wall of (this.unbounded ? UNBOUNDED_WALLS : WALLS).slice(2)) {
       if (Math.abs(wall.y) < 1e-10) this.line(wall.b / wall.x, VIEW.bottom, wall.b / wall.x, VIEW.top);
       else this.line(VIEW.left, (wall.b - wall.x * VIEW.left) / wall.y, VIEW.right, (wall.b - wall.x * VIEW.right) / wall.y);
     }
@@ -393,12 +391,12 @@ class ConvexDualityDemo extends HTMLElement {
     c.lineWidth = 2;
 
     const [axisRight, axisY] = this.screen(VIEW.right - pad, 0);
-    this.drawAxisLabel(1, axisRight, axisY + 18, 'right');
+    this.drawAxisLabel(1, axisRight + 16, axisY + 24, 'right');
     const [axisX, axisTop] = this.screen(0, VIEW.top - pad);
     this.drawAxisLabel(2, axisX + 12, axisTop + 7);
 
     for (const ball of this.balls) {
-      if (this.showForces) this.drawForces(ball);
+      this.drawForces(ball);
       const [x, y] = this.screen(ball.x, ball.y), radius = RADIUS * this.scale;
       c.fillStyle = '#000';
       c.beginPath();

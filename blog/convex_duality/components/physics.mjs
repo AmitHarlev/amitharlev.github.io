@@ -1,6 +1,6 @@
 // Maximize x + 0.85y subject to x,y >= 0 and three nonredundant bounds:
 // -x + 4y <= 24, x + y <= 9, and 2x - 2y <= 11.
-// The additional bound 2x + 3y <= 25 is redundant and strictly slack.
+// The additional bound 2x + 3y <= 28 is redundant and strictly slack.
 // The slanted right edge lets the region widen above the horizontal axis.
 // Unit outward normals make signed distances and circle contacts consistent.
 export const OBJECTIVE = Object.freeze({ x: 1, y: 0.85 });
@@ -39,7 +39,7 @@ export function applyBoundaryDamping(ball, normals, dt, rate = DAMPING_RATE) {
   return { x: ix / dt, y: iy / dt };
 }
 export const WALLS = [
-  [-1, 0, 0], [0, -1, 0], [-1, 4, 24], [1, 1, 9], [2, -2, 11], [2, 3, 25],
+  [-1, 0, 0], [0, -1, 0], [-1, 4, 24], [1, 1, 9], [2, -2, 11], [2, 3, 28],
 ].map(([x, y, b]) => {
   const length = Math.hypot(x, y);
   return Object.freeze({ x: x / length, y: y / length, b: b / length });
@@ -91,7 +91,7 @@ export function createBall(x, y) {
   return ball;
 }
 
-export function stepBall(ball, dt = STEP, force = FORCE, dampingRate = DAMPING_RATE) {
+export function stepBall(ball, dt = STEP, force = FORCE, dampingRate = DAMPING_RATE, restitution = 0.30) {
   const normals = WALLS.filter(w => w.b - RADIUS - w.x * ball.x - w.y * ball.y < 1e-8);
   const damping = applyBoundaryDamping(ball, normals, dt, dampingRate);
   ball.vx += force.x * dt;
@@ -107,13 +107,13 @@ export function stepBall(ball, dt = STEP, force = FORCE, dampingRate = DAMPING_R
 
   const contacts = WALLS.map((wall, index) => ({ wall, index }))
     .filter(({ wall: w }) => w.b - RADIUS - w.x * ball.x - w.y * ball.y < 1e-8);
-  return solveContactForces(ball, contacts, dt);
+  return solveContactForces(ball, contacts, dt, restitution);
 }
 
-export function solveContactForces(ball, normals, dt) {
+export function solveContactForces(ball, normals, dt, restitution = 0.30) {
   const contacts = normals.map(({ wall, index }) => {
       const speed = ball.vx * wall.x + ball.vy * wall.y;
-      return { wall, index, impulse: 0, target: speed > 0.18 ? -0.30 * speed : 0 };
+      return { wall, index, impulse: 0, target: speed > 0.18 ? -restitution * speed : 0 };
     });
   // Accumulated normal impulses permit correcting an earlier contact solve
   // without introducing tangential damping or spurious motion at a corner.

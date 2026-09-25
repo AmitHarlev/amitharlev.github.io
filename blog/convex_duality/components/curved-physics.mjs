@@ -76,7 +76,7 @@ export function createCurvedBall(x, y) {
   return ball;
 }
 
-export function stepCurvedBall(ball, dt = STEP, force = FORCE, dampingRate = DAMPING_RATE) {
+export function stepCurvedBall(ball, dt = STEP, force = FORCE, dampingRate = DAMPING_RATE, restitution = 0.30) {
   const normals = LINES.filter(w => w.b - RADIUS - w.x * ball.x - w.y * ball.y < 1e-8);
   const oldDistance = Math.hypot(ball.x - CURVE.x, ball.y - CURVE.y);
   if (CURVE.radius - RADIUS - oldDistance < 1e-8) {
@@ -95,5 +95,5 @@ export function stepCurvedBall(ball, dt = STEP, force = FORCE, dampingRate = DAM
   });
   const dx = ball.x - CURVE.x, dy = ball.y - CURVE.y, distance = Math.hypot(dx, dy);
   if (CURVE.radius - RADIUS - distance < 1e-8) contacts.push({ wall: { x: dx / distance, y: dy / distance }, index: 4 });
-  return solveContactForces(ball, contacts, dt);
+  return solveContactForces(ball, contacts, dt, restitution);
 }

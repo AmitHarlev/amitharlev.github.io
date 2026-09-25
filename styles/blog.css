@@ -127,6 +127,12 @@ table, .highlight > pre, pre.example {
     font-size: 2.2em;
 }
 
+.post-date {
+    margin: -0.75rem 0 2rem;
+    color: #666;
+    font-size: 1rem;
+}
+
 .subtitle {
     font-weight: normal;
     font-size: 0.75em;

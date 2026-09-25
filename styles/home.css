@@ -317,3 +317,26 @@ table ol {
     margin-left: 5px;
     padding-top: 2px;
 }
+/* Match the blog page's top navigation. */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 85%;
+    margin: 1.5em auto;
+}
+
+.header nav {
+    display: flex;
+    align-items: center;
+}
+
+.header a:hover,
+.header a:focus {
+    color: #1b5e20;
+    text-decoration: underline;
+}
+
+.recent-news li + li {
+    margin-top: 1rem;
+}

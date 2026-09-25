@@ -170,3 +170,18 @@ test('the normalized steeper objective accelerates correctly and selects the upp
     assert.ok(Math.hypot(ball.vx, ball.vy) < 0.02);
   }
 });
+
+test('inelastic collisions remove normal velocity while preserving sliding motion', () => {
+  const vertices = polygon(RADIUS);
+  for (const wall of WALLS) {
+    const ends = vertices.filter(p => Math.abs(wall.x * p.x + wall.y * p.y - wall.b + RADIUS) < 1e-8);
+    if (ends.length !== 2) continue;
+    const ball = createBall((ends[0].x + ends[1].x) / 2, (ends[0].y + ends[1].y) / 2);
+    ball.vx = 3 * wall.x - wall.y;
+    ball.vy = 3 * wall.y + wall.x;
+    stepBall(ball, STEP, { x: 0, y: 0 }, 0, 0);
+    assert.ok(Math.abs(ball.vx * wall.x + ball.vy * wall.y) < 1e-10);
+    assert.ok(Math.abs(-ball.vx * wall.y + ball.vy * wall.x - 1) < 1e-10);
+    assert.ok(isFeasible(ball.x, ball.y, RADIUS));
+  }
+});
